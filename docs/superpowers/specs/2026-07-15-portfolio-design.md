@@ -63,7 +63,7 @@ Recurring styling motifs: faint graph-grid background texture on cream sections;
 1. **Hero (cream):** giant two-line name `MYKE LHOWELLE / MARUNDAN` (letter-cascade on load), label "Full Stack Developer", meta row "Based in Batangas" / "Student · Intern".
 2. **Marquee band (ink):** infinite scrolling strip — `FULL STACK • WEB APPS • IOT • AI • ROBOTICS`.
 3. **About (cream):** bold 1–2 sentence statement (mask reveal), supporting paragraph (background, journey, career goals), skill chips. *(Rubric #1)*
-4. **Dark statement section (ink):** scroll-linked word highlight (scrub) on a statement like "Building web, hardware, and AI projects that actually work." Optional floating tool icons.
+4. **Dark statement section (ink):** scroll-linked word highlight (scrub) on a personal statement (final wording in Content Data). Stretch goal, only after everything else works: floating tech icons around the statement.
 5. **Selected Projects (cream):** 2×2 grid — each cell: year top, project name center, category bottom; hover reveals project image + cursor-following "View project" pill. Cells: Booking Website `Full Stack Web`, sentryCORE `IoT × AI`, MazeBot `Robotics`, and a 4th "More on GitHub →" cell. *(Rubric #2 entry points)*
 6. **Footer (royal violet):** giant watermark name with proximity letter-zoom; "Let's build something…" statement; links: Email, GitHub, LinkedIn, **Resume PDF download**; credit line "Designed & coded by Myke Lhowelle S. Marundan". *(Rubric #3)*
 
@@ -117,6 +117,7 @@ STAR text, screenshots, stats, and demo media are provided by Myke during the bu
 | Email | professional email — Myke provides during build |
 | Resume PDF | Myke provides during build |
 | STAR content ×3 | Myke provides during build (guided) |
+| About statement + dark-section statement wording | Drafted together during build; scrub statement default: "Building web, hardware, and AI projects that actually work" |
 
 ## 9. Learning Approach (how we build)
 
