@@ -1,0 +1,6 @@
+# Brainstorming companion working files (not part of the site)
+.superpowers/
+
+# OS junk
+Thumbs.db
+.DS_Store
