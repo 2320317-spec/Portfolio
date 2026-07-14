@@ -1,0 +1,55 @@
+/* ============ DESIGN TOKENS ============ */
+:root {
+  --cream: #F2EEE9;
+  --ink: #141414;
+  --violet: #2E2447;
+  --violet-light: #453768;
+  --lavender: #A99CC9;
+
+  --font-display: 'Archivo Black', 'Arial Black', sans-serif;
+  --font-body: 'Archivo', Arial, sans-serif;
+
+  --pad-x: clamp(1.25rem, 5vw, 4rem);   /* responsive side padding */
+}
+
+/* ============ RESET ============ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--ink);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+
+/* Graph-paper texture on cream sections */
+.grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(20,20,20,.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(20,20,20,.045) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ============ UTILITIES ============ */
+.label {
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #8a8072;
+}
+section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
+
+/* ============ ACCESSIBILITY ============ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
