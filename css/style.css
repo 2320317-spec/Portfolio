@@ -54,7 +54,9 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
 .hero-role { margin-bottom: 1rem; }
 .hero-name {
   font-family: var(--font-display);
-  font-size: clamp(3rem, 12.5vw, 11rem);
+  /* 9.5vw sized to "Myke Lhowelle" (13 chars) fitting one line on desktop;
+     on phones the 3rem floor wins and the name stacks by words instead. */
+  font-size: clamp(3rem, 9.5vw, 11rem);
   line-height: .92;
   text-transform: uppercase;
   letter-spacing: -.02em;
@@ -72,12 +74,13 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
 }
 
 /* ============ #1 LETTER CASCADE ============ */
+.word-wrap { display: inline-block; white-space: nowrap; }
 .letter {
   display: inline-block;
   opacity: 0;
   transform: translateY(.6em) rotate(4deg);
   animation: letter-rise .7s cubic-bezier(.2, .7, .2, 1) forwards;
-  animation-delay: calc(var(--base, 0ms) + var(--i) * 40ms);
+  animation-delay: calc(var(--base, 0ms) + var(--i) * 120ms);
 }
 @keyframes letter-rise {
   to { opacity: 1; transform: translateY(0) rotate(0); }
