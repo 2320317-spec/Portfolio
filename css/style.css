@@ -44,6 +44,33 @@ ul { list-style: none; }
 }
 section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
 
+/* ============ HERO ============ */
+.hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.hero-role { margin-bottom: 1rem; }
+.hero-name {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 12.5vw, 11rem);
+  line-height: .92;
+  text-transform: uppercase;
+  letter-spacing: -.02em;
+}
+.hero-name .cascade-line { display: block; }
+.hero-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #6f675a;
+}
+
 /* ============ ACCESSIBILITY ============ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
