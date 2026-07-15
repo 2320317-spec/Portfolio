@@ -97,3 +97,13 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Overshoot for free:** spring peaks at ~1.15, so faces pop slightly past home and settle — a bounce nobody scripted.
 - **Iterating on feel is normal:** three versions to match the picture in Myke's head. Each rejection was informative ("it grows" → "it slides" → "it *rises*"). Naming what's wrong is design skill.
 - **Knobs:** `SPREAD` 0.55 (stagger share), `SHADOW_STEPS` 40 + `SHADOW_STEP_EM` 0.01 (slab length), `STIFFNESS`/`DAMPING` (bounce).
+
+## Task 8e — Pinning the footer (the award-site scroll trick)
+- **What a "pin" actually is:** a wrapper taller than its `position: sticky` child. The child freezes to the viewport while the wrapper's extra height scrolls past. No scroll-jacking, no library — the page never lies about how much scroll is left, because the scroll is real.
+- **`overflow-x: hidden` silently kills `position: sticky`.** Setting it forces `overflow-y` to compute to `auto`, making body a scroll container, so sticky sticks to *body* instead of the viewport. Fix: **`overflow-x: clip`** — clips without creating a scroll container, so `overflow-y` stays `visible`. Verified before/after.
+- **Measure the element you're driving from.** While pinned, the watermark doesn't move — its own rect reads the same number forever. The progress has to come from the *pin wrapper's* travel: `-pin.top / (pin.height − footer.height)`.
+- **A pinned element must fit the viewport** or its bottom is simply cut off. Mine measured 744px against a 720px screen — trimmed padding to fit. Verified 720/720 desktop and 812/812 mobile.
+- **`svh` not `vh` for pinned height:** `vh` is the *large* viewport height; the moment a phone's address bar slides in, a `100vh` footer is taller than the screen and loses its bottom. `svh` assumes chrome is showing.
+- **Finish before the pin releases** (`FINISH_AT 0.85`): the name reaches full height with scroll to spare, so it gets a beat to just stand there instead of completing on the last pixel.
+- **Reduced motion must unwind the pin too.** With no animation to watch, a pinned screen is a full viewport of dead frozen scrolling — *worse* than no effect. `height: auto` + `position: static` gives those users a plain footer.
+- **Knob:** `.footer-pin { height: 200svh }` — 100svh of frozen scroll. Lower = snappier reveal.

@@ -233,10 +233,26 @@ function initWatermark() {
 
   // SCROLL sets sprout targets, staggered so letters break ground in
   // sequence (same measure -> normalize -> map recipe as the scrub).
+  // Progress comes from the PIN's travel, not the watermark's position:
+  // while pinned the watermark doesn't move at all, so its own rect would
+  // read the same number forever.
+  const pin = el.closest('.footer-pin');
+  const footer = el.closest('.site-footer');
+  const FINISH_AT = 0.85; // fully risen a little before the pin releases,
+                          // so the name gets a beat to just stand there
+
   function onScroll() {
-    const rect = el.getBoundingClientRect();
-    const vh = window.innerHeight;
-    const progress = Math.min(1, Math.max(0, (vh - rect.top) / (vh * 0.55)));
+    // travel = how far the wrapper scrolls while the footer stays stuck
+    const travel = pin && footer ? pin.offsetHeight - footer.offsetHeight : 0;
+    let progress;
+    if (travel > 0) {
+      progress = Math.min(1, Math.max(0, -pin.getBoundingClientRect().top / (travel * FINISH_AT)));
+    } else {
+      // No room to pin (very short viewport): fall back to a plain reveal
+      // as the watermark enters the screen, so the name still comes up.
+      const vh = window.innerHeight;
+      progress = Math.min(1, Math.max(0, (vh - el.getBoundingClientRect().top) / (vh * 0.55)));
+    }
     const n = letters.length;
     springs.forEach((s, i) => {
       const start = n > 1 ? (i / (n - 1)) * SPREAD : 0; // this letter's turn
