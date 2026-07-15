@@ -4,6 +4,7 @@
   --ink: #141414;
   --violet: #2E2447;
   --violet-light: #453768;
+  --violet-shadow: #1B1530;  /* darker than the bg — the long shadow */
   --lavender: #A99CC9;
 
   --font-display: 'Archivo Black', 'Arial Black', sans-serif;
@@ -272,6 +273,17 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   color: var(--violet-light);
   text-align: center;
   user-select: none;
+  /* Long shadow. CSS can't loop, so the stack of offsets is generated
+     in initLongShadow() and handed here as --long-shadow. text-shadow
+     inherits, so every .letter paints its own slab and drags it along
+     when the jelly springs fire. */
+  text-shadow: var(--long-shadow, none);
+  /* Reserve room for the slab so it never collides with the CTA below.
+     --shadow-reach is published by initLongShadow(); `max()` keeps a
+     3rem floor for layout breathing room on small screens, where 0.4em
+     of a 3rem font is only ~19px. em stays tied to the watermark's own
+     size, so this holds at every viewport. */
+  margin-bottom: max(3rem, calc(var(--shadow-reach, 0em) + .15em));
 }
 .watermark .letter {
   /* override cascade defaults: watermark letters are always visible.
@@ -282,7 +294,9 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   transform-origin: bottom center;
   will-change: transform;
 }
-.footer-cta { margin-top: 3rem; }
+/* Spacing lives on .watermark — the element casting the shadow owns
+   reserving room for it. */
+.footer-cta { margin-top: 0; }
 .footer-small { font-size: 1.05rem; color: var(--lavender); }
 .footer-big {
   font-family: var(--font-display);

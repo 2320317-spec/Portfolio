@@ -73,3 +73,12 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Mouse sets targets, physics does the rest:** the cursor never sets sizes directly. Decoupling input from motion is why it feels alive.
 - **New knobs:** `STIFFNESS` 0.12 (snap speed), `DAMPING` 0.72 (wobble length — lower = jigglier).
 - **`e.pageX` vs `e.clientX`:** page coordinates include scroll, so cached letter centers stay correct anywhere on the page.
+
+## Task 8c — Long shadow
+- **A long shadow is a stack, not a shadow:** 40 copies of the glyph, each nudged 0.01em further down-right, welded into a solid slab. The step must be much finer than the stroke width or gaps show (1.4px steps vs ~20px strokes = solid).
+- **CSS can't loop, so JS writes the value:** `buildLongShadow()` returns the string; CSS applies it via `var(--long-shadow)`. Same JS-computes/CSS-renders split as the reveals.
+- **`text-shadow` inherits:** declared once on `.watermark`, every `.letter` paints its own slab — and drags it along when the jelly springs fire.
+- **`em` beats `px` for anything tied to type:** the shadow is 0.4em, so it scales with the responsive font instead of dwarfing the text on phones (56px on desktop, 19px on mobile — automatically).
+- **Single source of truth:** JS publishes `--shadow-reach`; the CSS margin is derived from it. Retune the knobs and the spacing follows — no silent collisions.
+- **`max(3rem, calc(...))`:** picks whichever is bigger — the em-based clearance on desktop, or a 3rem floor for layout breathing room on phones. One line covers both worlds.
+- **Whoever casts the shadow reserves the room:** spacing moved onto `.watermark` instead of the CTA below it. Responsibility belongs with the cause.

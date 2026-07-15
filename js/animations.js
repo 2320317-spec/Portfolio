@@ -95,6 +95,32 @@ function initScrub() {
   onScroll();
 }
 
+/* ---- Long shadow (footer watermark) ------------- */
+/* A "long shadow" is just N copies of the glyph, each nudged one step
+   further down-right, welded into a solid slab. CSS has no loops, so
+   we build the value here. Steps are in `em` so the shadow scales with
+   the responsive font size instead of dwarfing the text on phones. */
+function buildLongShadow(steps, stepEm, color) {
+  const parts = [];
+  for (let i = 1; i <= steps; i++) {
+    const offset = (i * stepEm).toFixed(3) + 'em';
+    parts.push(`${offset} ${offset} 0 ${color}`);
+  }
+  return parts.join(', ');
+}
+
+function initLongShadow() {
+  const el = document.getElementById('watermark');
+  if (!el) return;
+  const STEPS = 40;        // knob: more steps = longer slab
+  const STEP_EM = 0.01;    // knob: 40 x 0.01em = 0.4em of shadow
+
+  el.style.setProperty('--long-shadow', buildLongShadow(STEPS, STEP_EM, 'var(--violet-shadow)'));
+  // Publish how far the slab reaches so the CSS below can reserve room
+  // for it. One source of truth: retune the knobs and spacing follows.
+  el.style.setProperty('--shadow-reach', (STEPS * STEP_EM).toFixed(3) + 'em');
+}
+
 /* ---- #9 Proximity letter zoom (footer watermark) ---- */
 /* Jelly edition: each letter is a spring. The mouse only sets
    TARGETS; a frame loop integrates spring physics toward them,

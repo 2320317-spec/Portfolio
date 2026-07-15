@@ -4,5 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initReveals();
   initScrub();
   initProjectPills();
+  initLongShadow();
   initLetterZoom();
 });
