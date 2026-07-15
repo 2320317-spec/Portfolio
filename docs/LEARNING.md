@@ -27,3 +27,14 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **The infinite-loop illusion:** duplicate the text, slide the strip left exactly 50%, restart instantly — copy #2 lands where copy #1 began, so the jump is invisible.
 - **`@keyframes` vs `transition`:** keyframes = self-running timeline (no trigger); transition = reaction to a property change (hover, class toggle).
 - **`aria-hidden="true"`:** hides the duplicate copy from screen readers so blind users don't hear everything twice.
+
+## Task 5 — About + scroll/mask reveals
+- **IntersectionObserver:** hand the browser elements and it "rings the doorbell" when they enter the screen — no scroll-event spam, efficient by design.
+- **JS decides WHEN, CSS decides HOW:** JS only toggles a class (`is-visible`); the animation itself lives entirely in CSS. Clean separation of concerns.
+- **Stagger via `--d`:** a custom property used as `transition-delay` lets sibling elements offset from one another with one shared rule.
+
+## Bug #2 — The frozen laboratory
+- **Symptom:** reveals never fired in the automated preview; transitions stuck at starting values even with correct classes and rules.
+- **Proof:** disabling transitions entirely made styles apply instantly → CSS logic was correct all along.
+- **Root cause:** the preview environment was a throttled renderer producing no animation frames — IntersectionObserver and transitions starve without frames.
+- **Lesson:** sometimes the bug is in the test equipment, not the code. Prove it with a controlled experiment; final verification belongs in a real browser.

@@ -36,3 +36,28 @@ function initCascade() {
   if (REDUCE_MOTION) return; // text stays visible, no animation
   document.querySelectorAll('[data-cascade] .cascade-line').forEach(splitLetters);
 }
+
+/* ---- #3 Scroll reveal --------------------------- */
+/* IntersectionObserver = "ring my doorbell when this
+   element enters the viewport". We add .is-visible once,
+   then stop watching that element. */
+function initReveals() {
+  const targets = document.querySelectorAll('[data-reveal]');
+  if (!targets.length) return;
+
+  if (REDUCE_MOTION) {
+    targets.forEach(el => el.classList.add('is-visible'));
+    return;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  targets.forEach(el => io.observe(el));
+}

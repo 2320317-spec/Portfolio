@@ -109,6 +109,54 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   to { opacity: 1; transform: translateY(0) rotate(0); }
 }
 
+/* ============ #3 SCROLL REVEAL ============ */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity .7s ease var(--d, 0s),
+    transform .7s cubic-bezier(.2, .7, .2, 1) var(--d, 0s);
+}
+[data-reveal].is-visible { opacity: 1; transform: none; }
+
+/* ============ #2 MASK REVEAL ============ */
+.mask { display: block; overflow: hidden; }
+.mask-inner {
+  display: block;
+  transform: translateY(110%);
+  transition: transform .8s cubic-bezier(.2, .7, .2, 1) var(--d, 0s);
+}
+[data-reveal].is-visible .mask-inner { transform: translateY(0); }
+
+/* ============ ABOUT ============ */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  margin-top: 1.5rem;
+}
+.about-statement {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3.2vw, 2.6rem);
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: -.01em;
+}
+.about-body p { color: #4a4438; max-width: 42rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.2rem; }
+.chips li {
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  padding: .2rem .8rem;
+  font-size: .7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+@media (max-width: 720px) {
+  .about-grid { grid-template-columns: 1fr; }
+}
+
 /* ============ ACCESSIBILITY ============ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
