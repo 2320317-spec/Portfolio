@@ -83,14 +83,17 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **`max(3rem, calc(...))`:** picks whichever is bigger — the em-based clearance on desktop, or a 3rem floor for layout breathing room on phones. One line covers both worlds.
 - **Whoever casts the shadow reserves the room:** spacing moved onto `.watermark` instead of the CTA below it. Responsibility belongs with the cause.
 
-## Task 8d — Scroll-sprout (`initLetterZoom` → `initWatermark`)
-- **The design call:** hover-to-reveal was rejected — it would hide my own name until someone mouses over it, and hide it *forever* on phones. Scroll reveals it (works everywhere); hover still plays with it. **Never put essential content behind an interaction.**
-- **Grow ≠ rise (v1 was wrong):** `scaleY(0→1)` squashes and inflates the letter in place. It reads as *growing*, not *rising*. A real rise is `translateY` — the letter moves as a rigid body, keeping its shape.
-- **A rise needs a ground line to hide behind**, and that's the hard part: `overflow: hidden` clips at the box, which would slice the long shadow off (and it silently rewrites inline-block baselines — a classic CSS trap).
-- **`clip-path: inset()` takes NEGATIVE values**, so the clip region can be *bigger* than the element. Sides and top pushed out (slab + jelly spill freely), bottom parked `--shadow-reach` below the box = the ground line, with the whole shadow above it. This is the trick that made the whole effect possible.
-- **Don't rely on font metrics:** parked exactly at the ground, the letter's box top landed 0.25px *above* the line — hidden only because Archivo Black leaves space over its capitals. Another font would leak a sliver. Added 4px of explicit slack.
-- **Two springs, one letter:** `sprout` (scroll-driven rise, in px) and `hover` (mouse-driven jelly), combined at paint time as `translateY(rise + lift) scale(grow)`. Independent inputs, shared physics.
-- **Staggering a scrub:** each letter gets its own slice of the scroll window — `local = (progress − i×SPREAD/n) / (1−SPREAD)`. Verified: 30% scroll → `.67 .56 .44 .33 .22 .11 0…` — a wave front rolling through the word.
-- **Overshoot for free:** the spring peaks at 1.154, so a letter sails ~30px *past* its resting spot before settling back — a bounce nobody had to script. It falls out of the physics.
-- **Measure what you can't see:** confirmed scroll progress reaches exactly 1.0 at max scroll — otherwise the last letters would have stayed buried forever, and no amount of staring would have explained why.
-- **New knob:** `SPREAD` 0.55 — share of the scroll window spent staggering. Higher = more of a rolling wave; 0 = all letters pop together.
+## Task 8d — Rising from the ground (three iterations to the right animation)
+- **v1 — grow:** `scaleY(0→1)` from the baseline. Read as *inflating*, not rising. Rejected by eye.
+- **v2 — rise behind a mask:** letters parked below a clip-path ground line, translating up. Closer, but the story was still "sliding out of a slot."
+- **v3 — extrusion (final):** the ground IS the background. A flat letter is invisible because its face is painted the background color and casts no shadow — **camouflage, not clipping**. Scroll extrudes it: face travels up-left along the shadow axis while the shadow grows beneath it.
+- **The invariant that sells it:** face offset `(1−p)·reach` + shadow length `p·reach` always sum to `reach` — the slab's far end stays welded to the ground point while the face climbs. Verified: p=0.5 → face 28.2px out, slab 20 of 40 steps.
+- **The shadow tells the story.** What reads as "rising" isn't the movement — it's the lengthening shadow. Animate the *evidence* of height, not just the height.
+- **Camouflage needs no mask:** at rest, face color === background color (`rgb(46,36,71)` both, read from the design tokens so a palette change can't break it) and `text-shadow: none`. Nothing is hidden; it's just invisible.
+- **Precompute, then index:** 41 shadow strings built once; each frame just picks `SHADOWS[idx]` and only touches the DOM when the index changes. Never rebuild strings at 60fps.
+- **The design call that survived all three versions:** hover-to-reveal was rejected — it would hide the name until someone mouses over it, forever on phones. Scroll reveals it for everyone. **Never put essential content behind an interaction.**
+- **Two springs, one letter:** `sprout` (scroll-driven extrusion) and `hover` (mouse jelly), combined at paint time as `translate(off, off+lift) scale(grow)`. Independent inputs, shared physics.
+- **Staggering a scrub:** each letter gets its own slice of the scroll window — verified 30% scroll → `.67 .56 .44 .33 .22 .11 0…`, a wave front rolling through the word.
+- **Overshoot for free:** spring peaks at ~1.15, so faces pop slightly past home and settle — a bounce nobody scripted.
+- **Iterating on feel is normal:** three versions to match the picture in Myke's head. Each rejection was informative ("it grows" → "it slides" → "it *rises*"). Naming what's wrong is design skill.
+- **Knobs:** `SPREAD` 0.55 (stagger share), `SHADOW_STEPS` 40 + `SHADOW_STEP_EM` 0.01 (slab length), `STIFFNESS`/`DAMPING` (bounce).

@@ -100,6 +100,9 @@ function initScrub() {
    further down-right, welded into a solid slab. CSS has no loops, so
    we build the value here. Steps are in `em` so the shadow scales with
    the responsive font size instead of dwarfing the text on phones. */
+const SHADOW_STEPS = 40;      // knob: more steps = longer slab
+const SHADOW_STEP_EM = 0.01;  // knob: 40 x 0.01em = 0.4em of shadow
+
 function buildLongShadow(steps, stepEm, color) {
   const parts = [];
   for (let i = 1; i <= steps; i++) {
@@ -112,22 +115,24 @@ function buildLongShadow(steps, stepEm, color) {
 function initLongShadow() {
   const el = document.getElementById('watermark');
   if (!el) return;
-  const STEPS = 40;        // knob: more steps = longer slab
-  const STEP_EM = 0.01;    // knob: 40 x 0.01em = 0.4em of shadow
-
-  el.style.setProperty('--long-shadow', buildLongShadow(STEPS, STEP_EM, 'var(--violet-shadow)'));
+  el.style.setProperty('--long-shadow',
+    buildLongShadow(SHADOW_STEPS, SHADOW_STEP_EM, 'var(--violet-shadow)'));
   // Publish how far the slab reaches so the CSS below can reserve room
   // for it. One source of truth: retune the knobs and spacing follows.
-  el.style.setProperty('--shadow-reach', (STEPS * STEP_EM).toFixed(3) + 'em');
+  el.style.setProperty('--shadow-reach', (SHADOW_STEPS * SHADOW_STEP_EM).toFixed(3) + 'em');
 }
 
-/* ---- #9 Watermark: scroll-sprout + proximity jelly ---- */
-/* Two forces, one spring system. Each letter carries two springs:
-     sprout — driven by SCROLL. The letter is parked below the ground
-              line (the clip edge set in CSS) and rises out of it as a
-              rigid body, dragging its shadow up into view with it.
-     hover  — driven by the MOUSE (the jelly zoom).
-   Neither input ever sets a size directly: they set TARGETS, and the
+/* ---- #9 Watermark: ground extrusion + proximity jelly ---- */
+/* The ground IS the background. At rest a letter lies flat in it:
+   face painted the background color (camouflaged), zero shadow — flat
+   things cast no shadow. Scroll extrudes it: the face travels up-left
+   along the shadow axis while the shadow grows step by step beneath
+   it, always bridging face -> ground. The lengthening shadow is what
+   sells the rise.
+   Each letter carries two springs:
+     sprout — scroll-driven extrusion height (0 flat .. 1 risen)
+     hover  — the mouse jelly zoom
+   Neither input ever sets a style directly: they set TARGETS, and the
    frame loop integrates physics toward them. That's why letters
    overshoot, wobble, and settle instead of gliding.
    User-approved tuning — do not change without asking Myke:
@@ -137,8 +142,8 @@ function initWatermark() {
   if (!el) return;
   splitLetters(el); // reuse the Task 3 splitter
   const letters = [...el.querySelectorAll('.letter')];
-  // No JS motion => CSS default (transform: none) leaves the name fully
-  // visible. The name is never hidden behind an interaction.
+  // No JS motion => CSS defaults: home position, lit face, full slab
+  // (inherited from .watermark). The name is never lost to a failure.
   if (!letters.length || REDUCE_MOTION) return;
 
   const RADIUS = 170;
@@ -147,11 +152,28 @@ function initWatermark() {
   const DAMPING = 0.72;   // friction: lower = wobblier jelly
   const SPREAD = 0.55;    // knob: share of the scroll window spent staggering
 
+  // One shadow string per possible height, shared by every letter:
+  // SHADOWS[0] = flat in the ground .. SHADOWS[40] = fully extruded.
+  const SHADOWS = ['none'];
+  for (let k = 1; k <= SHADOW_STEPS; k++) {
+    SHADOWS.push(buildLongShadow(k, SHADOW_STEP_EM, 'var(--violet-shadow)'));
+  }
+
+  // Face color ramp: read the tokens so a future palette change can't
+  // silently break the camouflage.
+  const readToken = (name) => {
+    const hex = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+  };
+  const GROUND = readToken('--violet');       // face color when flat
+  const LIT = readToken('--violet-light');    // face color when risen
+  const faceColor = (p) =>
+    'rgb(' + GROUND.map((g, i) => Math.round(g + (LIT[i] - g) * p)).join(',') + ')';
+
   // Cache letter centers in page coordinates. Transforms don't move
   // layout, but they DO skew getBoundingClientRect — so clear them
   // while measuring, then put them back.
-  let centers = [];
-  let buryPx = 0;
+  let centers = [], reachPx = 0;
   function measure() {
     const saved = letters.map(l => l.style.transform);
     letters.forEach(l => { l.style.transform = 'none'; });
@@ -159,16 +181,7 @@ function initWatermark() {
       const r = l.getBoundingClientRect();
       return r.left + r.width / 2 + window.scrollX;
     });
-    // How deep to park a letter: its own height plus the shadow slab
-    // hanging beneath it, so nothing pokes above the ground line.
-    // --shadow-reach comes from initLongShadow(), which main.js runs
-    // first — retune the shadow and the burial depth follows.
-    // +4 of slack: without it the letter's box top lands a hair ABOVE the
-    // ground line, and it only stays hidden because Archivo Black happens
-    // to leave space above its capitals. Don't depend on font metrics.
-    const reachEm = parseFloat(el.style.getPropertyValue('--shadow-reach')) || 0;
-    buryPx = letters[0].getBoundingClientRect().height +
-             reachEm * parseFloat(getComputedStyle(el).fontSize) + 4;
+    reachPx = SHADOW_STEPS * SHADOW_STEP_EM * parseFloat(getComputedStyle(el).fontSize);
     letters.forEach((l, i) => { l.style.transform = saved[i]; });
   }
   measure();
@@ -177,9 +190,26 @@ function initWatermark() {
   // Two springs per letter. c = current value, v = velocity.
   const springs = letters.map(() => ({
     sprout: { c: 0, v: 0, target: 0 },
-    hover:  { c: 0, v: 0, target: 0 }
+    hover:  { c: 0, v: 0, target: 0 },
+    shadowIdx: -1
   }));
-  letters.forEach(l => { l.style.transform = `translateY(${buryPx}px)`; }); // underground
+
+  function paint(i) {
+    const s = springs[i];
+    const p = Math.min(1, Math.max(0, s.sprout.c)); // clamped for shadow/color
+    const off = (1 - s.sprout.c) * reachPx;         // overshoot pops past home
+    const grow = 1 + MAX * s.hover.c * s.hover.c;   // jelly bump
+    const lift = -4 * s.hover.c;                    // jelly's little hop
+    letters[i].style.transform =
+      `translate(${off.toFixed(1)}px, ${(off + lift).toFixed(1)}px) scale(${grow.toFixed(3)})`;
+    const idx = Math.round(p * SHADOW_STEPS);
+    if (idx !== s.shadowIdx) { // rebuild strings only when the height changes
+      s.shadowIdx = idx;
+      letters[i].style.textShadow = SHADOWS[idx];
+      letters[i].style.color = faceColor(p);
+    }
+  }
+  letters.forEach((_, i) => paint(i)); // ground state before the first frame
 
   let rafId = null;
 
@@ -195,11 +225,7 @@ function initWatermark() {
     springs.forEach((s, i) => {
       if (step(s.sprout)) active = true;
       if (step(s.hover)) active = true;
-      const grow = 1 + MAX * s.hover.c * s.hover.c; // jelly bump
-      const rise = (1 - s.sprout.c) * buryPx;       // 1 => home, 0 => buried
-      const lift = -4 * s.hover.c;                  // jelly's little hop
-      letters[i].style.transform =
-        `translateY(${(rise + lift).toFixed(1)}px) scale(${grow.toFixed(3)})`;
+      paint(i);
     });
     rafId = active ? requestAnimationFrame(tick) : null; // sleep when settled
   }
