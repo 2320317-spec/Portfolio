@@ -44,3 +44,15 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **The measure → normalize → map recipe:** read position with `getBoundingClientRect()`, convert to a 0–1 progress number, then map progress onto the effect (60% progress = 60% of words lit). Reusable for endless scroll effects.
 - **`scroll-behavior: smooth` is an animation too:** programmatic `scrollTo` glides instead of jumping — pass `behavior: 'instant'` when you need to jump (e.g. in tests).
 - **Split-into-spans, third appearance:** cascade (by letter), scrub (by word). Same core trick, different unit and driver.
+
+## Task 7 — Projects grid + hover reveal
+- **CSS Grid vs flexbox:** flexbox = one dimension (a row OR a column); grid = two dimensions (`1fr 1fr` → equal columns, cells flow automatically).
+- **Layering with position:** parent `relative` = anchor; child `absolute; inset: 0` = stretched over the parent. The hover image is always present at `opacity: 0` — hover just flips it, so it's instant.
+- **Mouse coordinate conversion:** `e.clientX - rect.left` turns screen coordinates into inside-this-element coordinates. That's the whole cursor-following trick.
+- **`(hover: none)` media query:** phones can't hover — give them a permanent faint image and hide cursor-only UI. Feature-detect, don't device-detect.
+
+## Bug #3 — The stale cache
+- **Symptom (recurring):** freshly edited JS wouldn't run after navigation; functions existed on the server but not in the running page.
+- **Root cause:** our dev server sent no `Cache-Control` header, so the browser used "heuristic caching" and served old copies of files.
+- **Fix at the root:** dev server now sends `Cache-Control: no-store` — browsers must always fetch fresh during development.
+- **Lesson:** HTTP caching is a real protocol layer between your editor and your browser. When code "doesn't update," check what the browser actually loaded (hard refresh = Ctrl+Shift+R bypasses cache).

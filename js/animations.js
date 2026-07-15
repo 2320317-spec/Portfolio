@@ -94,3 +94,17 @@ function initScrub() {
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 }
+
+/* ---- #8 Cursor-following "View project" pill ---- */
+function initProjectPills() {
+  if (!window.matchMedia('(hover: hover)').matches) return; // touch: skip
+  document.querySelectorAll('.project-cell').forEach(cell => {
+    const pill = cell.querySelector('.view-pill');
+    if (!pill) return;
+    cell.addEventListener('mousemove', (e) => {
+      const rect = cell.getBoundingClientRect();
+      pill.style.left = (e.clientX - rect.left) + 'px';
+      pill.style.top = (e.clientY - rect.top) + 'px';
+    });
+  });
+}

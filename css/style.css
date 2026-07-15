@@ -174,6 +174,88 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
 .statement-text .word { color: #4a4a45; transition: color .25s ease; }
 .statement-text .word.lit { color: var(--cream); }
 
+/* ============ PROJECTS GRID + #8 HOVER REVEAL ============ */
+.projects-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  text-transform: uppercase;
+  line-height: 1;
+  margin: 1rem 0 2.5rem;
+}
+.project-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid #d8d0c2;
+}
+.project-cell {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border: 1px solid #d8d0c2;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+  cursor: pointer;
+}
+/* image sits underneath, invisible until hover */
+.cell-img {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity .3s ease;
+  background-size: cover;
+  background-position: center;
+}
+/* placeholder art until real screenshots land in Task 12 */
+.img-booking { background-image: linear-gradient(135deg, #c9b8ff, #e8e0ff 50%, #9db8ff); }
+.img-sentry  { background-image: linear-gradient(135deg, #2e2447, #6d5a9e 55%, #a99cc9); }
+.img-mazebot { background-image: linear-gradient(135deg, #b8e6c9, #e8fff0 50%, #7acca0); }
+
+.project-cell:hover .cell-img { opacity: 1; }
+.cell-year, .cell-name, .cell-cat { position: relative; z-index: 1; }
+.cell-year { align-self: flex-start; font-size: .75rem; color: #8a8072; }
+.cell-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.6vw, 1.9rem);
+  text-transform: uppercase;
+  text-align: center;
+}
+.cell-cat { font-size: .65rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: #6f675a; }
+.cell-more { background: var(--ink); color: var(--cream); justify-content: center; gap: .6rem; }
+.cell-more .cell-cat { color: #9b9285; }
+
+/* cursor-following pill (positioned by JS) */
+.view-pill {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(.6);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: .55rem 1.2rem;
+  font-size: .8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,.18);
+  transition: opacity .25s ease, transform .25s cubic-bezier(.2,.7,.2,1);
+}
+.project-cell:hover .view-pill { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+/* touch devices: no hover — show a hint of the image, hide pills */
+@media (hover: none) {
+  .cell-img { opacity: .25; }
+  .view-pill { display: none; }
+}
+@media (max-width: 720px) {
+  .project-grid { grid-template-columns: 1fr; }
+}
+
 /* ============ ACCESSIBILITY ============ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

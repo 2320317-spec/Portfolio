@@ -32,7 +32,12 @@ http.createServer((req, res) => {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       return res.end('Not found: ' + urlPath);
     }
-    res.writeHead(200, { 'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream' });
+    res.writeHead(200, {
+      'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream',
+      // Dev server rule: never let the browser cache. Without this the
+      // browser "heuristically" caches files and serves stale JS/CSS.
+      'Cache-Control': 'no-store'
+    });
     res.end(data);
   });
 }).listen(PORT, () => {
