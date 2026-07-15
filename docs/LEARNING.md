@@ -107,3 +107,16 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Finish before the pin releases** (`FINISH_AT 0.85`): the name reaches full height with scroll to spare, so it gets a beat to just stand there instead of completing on the last pixel.
 - **Reduced motion must unwind the pin too.** With no animation to watch, a pinned screen is a full viewport of dead frozen scrolling — *worse* than no effect. `height: auto` + `position: static` gives those users a plain footer.
 - **Knob:** `.footer-pin { height: 200svh }` — 100svh of frozen scroll. Lower = snappier reveal.
+
+## Task 8f — Clearances, and the wiggle bug they exposed
+- **Dead zones (`LEAD_IN` .15 / `LEAD_OUT` .2):** never start an animation on the same pixel the pin locks, or end it on the pixel it releases — scroll jitter at the edges makes it twitch. Budget the travel: 120px frozen → 520px rising → 160px frozen. The same idea as ScrollTrigger's start/end offsets.
+- **Mapping a range inside a range:** `progress = (raw − LEAD_IN) / (1 − LEAD_IN − LEAD_OUT)`, clamped. Squeeze the animation into the middle slice of the scroll.
+- **The real wiggle was a physics bug, not jitter.** Clamping the shadow at 40 steps while the overshooting face kept moving meant `face + shadow` no longer equalled `reach` — the slab's far end *lifted off the ground* by 8.7px on every bounce. Measured old drift −8.7px vs new −0.2px.
+- **An invariant is only true if it's true everywhere.** I clamped one term of `face + shadow == reach` and not the other, so it silently broke at exactly the moment anyone would notice. Overshoot is a legitimate state: a letter standing taller than rest must cast a *longer* shadow (46 steps, not 40).
+- **"It looks a bit off" is a bug report.** Myke saw an 8.7px drift by eye and called it wiggling; measuring turned a vague feel into an exact number and a root cause.
+
+## Bug #4 — The zero-height viewport
+- **Symptom:** `travel` came back as −871px; the footer appeared taller than its own pin wrapper.
+- **Cause:** the automated preview pane's viewport had collapsed to `innerHeight: 0`, so `100svh` resolved to `0px` and the pin had no height. Environment, not code (cousin of Bug #2).
+- **The tell:** two sign errors cancelled and the progress curve *looked* plausible. A passing test on garbage input is worse than a failing one — sanity-check the inputs (`travelIsPositive`), not just the outputs.
+- **The guard earned its keep:** `if (travel > 0)` meant the real site degraded to a plain reveal instead of dividing by nonsense. Defensive guards are for the states you didn't imagine.

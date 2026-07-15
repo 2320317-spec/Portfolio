@@ -154,8 +154,13 @@ function initWatermark() {
 
   // One shadow string per possible height, shared by every letter:
   // SHADOWS[0] = flat in the ground .. SHADOWS[40] = fully extruded.
+  // Built past 40 as well: when a spring overshoots, the letter stands
+  // taller than its resting height and must cast a LONGER shadow, or the
+  // slab's far end lifts off the ground point and the bounce reads as a
+  // glitch instead of a bounce.
+  const MAX_SHADOW_IDX = Math.round(SHADOW_STEPS * 1.3);
   const SHADOWS = ['none'];
-  for (let k = 1; k <= SHADOW_STEPS; k++) {
+  for (let k = 1; k <= MAX_SHADOW_IDX; k++) {
     SHADOWS.push(buildLongShadow(k, SHADOW_STEP_EM, 'var(--violet-shadow)'));
   }
 
@@ -196,17 +201,20 @@ function initWatermark() {
 
   function paint(i) {
     const s = springs[i];
-    const p = Math.min(1, Math.max(0, s.sprout.c)); // clamped for shadow/color
-    const off = (1 - s.sprout.c) * reachPx;         // overshoot pops past home
-    const grow = 1 + MAX * s.hover.c * s.hover.c;   // jelly bump
-    const lift = -4 * s.hover.c;                    // jelly's little hop
+    const c = s.sprout.c;                         // may overshoot past 1
+    const off = (1 - c) * reachPx;                // face: reach => flat, 0 => home
+    const grow = 1 + MAX * s.hover.c * s.hover.c; // jelly bump
+    const lift = -4 * s.hover.c;                  // jelly's little hop
     letters[i].style.transform =
       `translate(${off.toFixed(1)}px, ${(off + lift).toFixed(1)}px) scale(${grow.toFixed(3)})`;
-    const idx = Math.round(p * SHADOW_STEPS);
+    // Shadow tracks the SAME unclamped height as the face, so
+    // face offset + shadow length always == reach: the slab's far end
+    // stays welded to the ground point even mid-bounce.
+    const idx = Math.min(MAX_SHADOW_IDX, Math.max(0, Math.round(c * SHADOW_STEPS)));
     if (idx !== s.shadowIdx) { // rebuild strings only when the height changes
       s.shadowIdx = idx;
       letters[i].style.textShadow = SHADOWS[idx];
-      letters[i].style.color = faceColor(p);
+      letters[i].style.color = faceColor(Math.min(1, Math.max(0, c)));
     }
   }
   letters.forEach((_, i) => paint(i)); // ground state before the first frame
@@ -238,15 +246,20 @@ function initWatermark() {
   // read the same number forever.
   const pin = el.closest('.footer-pin');
   const footer = el.closest('.site-footer');
-  const FINISH_AT = 0.85; // fully risen a little before the pin releases,
-                          // so the name gets a beat to just stand there
+  // Dead zones at both ends of the pin's travel. Without them the rise
+  // starts on the same pixel the pin locks and ends near the release, so
+  // scroll jitter at either edge makes the letters twitch. Knobs:
+  const LEAD_IN = 0.15;   // frozen beat after locking, before anything moves
+  const LEAD_OUT = 0.2;   // frozen beat once the name is fully up
+  const SPAN = 1 - LEAD_IN - LEAD_OUT; // the slice that actually animates
 
   function onScroll() {
     // travel = how far the wrapper scrolls while the footer stays stuck
     const travel = pin && footer ? pin.offsetHeight - footer.offsetHeight : 0;
     let progress;
     if (travel > 0) {
-      progress = Math.min(1, Math.max(0, -pin.getBoundingClientRect().top / (travel * FINISH_AT)));
+      const raw = -pin.getBoundingClientRect().top / travel; // 0..1 across the pin
+      progress = Math.min(1, Math.max(0, (raw - LEAD_IN) / SPAN));
     } else {
       // No room to pin (very short viewport): fall back to a plain reveal
       // as the watermark enters the screen, so the name still comes up.
