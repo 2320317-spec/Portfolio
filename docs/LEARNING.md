@@ -62,3 +62,14 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Proximity math:** distance → closeness (0–1) → `scale = 1 + MAX × closeness²`. Squaring the closeness makes falloff feel organic. Four numbers define the whole personality.
 - **`::after` pseudo-elements:** CSS can conjure a phantom child element — the underline is drawn by CSS, no extra HTML. `transform-origin` right→left flip makes it exit the opposite way it entered.
 - **Tone-on-tone:** the watermark is a lighter shade of the footer's own violet — presence without shouting. Cheap trick, expensive look.
+
+## Task 8b — Jelly (spring physics)
+- **Why a transition can't do jelly:** a CSS transition glides to the target and stops. Jelly overshoots, springs back, wobbles, settles. That needs simulation, not interpolation.
+- **The whole engine is 3 lines, run every frame:**
+  `v += (target - c) * STIFFNESS` (spring pull) → `v *= DAMPING` (friction) → `c += v` (move).
+  Momentum carries past the target = overshoot; friction shrinks each bounce = settle.
+- **Verified numbers:** target scale 1.18, actual peak 1.24 (33% overshoot) at frame ~10, settled by frame ~40. Physics proven by simulating the loop in the console.
+- **`requestAnimationFrame`:** "run my function before the next repaint" (~60×/sec). The loop stops itself when every spring is at rest and wakes on mousemove — never burn frames on nothing.
+- **Mouse sets targets, physics does the rest:** the cursor never sets sizes directly. Decoupling input from motion is why it feels alive.
+- **New knobs:** `STIFFNESS` 0.12 (snap speed), `DAMPING` 0.72 (wobble length — lower = jigglier).
+- **`e.pageX` vs `e.clientX`:** page coordinates include scroll, so cached letter centers stay correct anywhere on the page.
