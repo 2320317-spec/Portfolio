@@ -22,3 +22,8 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Fix at the root:** wrap each word in a `white-space: nowrap` span, keep real spaces as text between words — restores natural spacing AND natural word wrapping.
 - **Second finding:** the 12.5vw font size borrowed from the inspiration never fit MY 13-character name; sized to 9.5vw measured against my own content. Design to your content, not someone else's.
 - **Process:** evidence → hypothesis → minimal console test (0px → 17px) → root fix → measured verification. Never guess-and-patch.
+
+## Task 4 — Marquee
+- **The infinite-loop illusion:** duplicate the text, slide the strip left exactly 50%, restart instantly — copy #2 lands where copy #1 began, so the jump is invisible.
+- **`@keyframes` vs `transition`:** keyframes = self-running timeline (no trigger); transition = reaction to a property change (hover, class toggle).
+- **`aria-hidden="true"`:** hides the duplicate copy from screen readers so blind users don't hear everything twice.
