@@ -1427,6 +1427,8 @@ git commit -m "fix: responsive, touch, reduced-motion, and a11y issues from QA s
 <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
 ```
 
+- [ ] **Step 1.5: Remove `scroll-behavior: smooth` from the `html` rule in `css/style.css`** — CSS smooth scrolling and Lenis fight over control of the scroll position (discovered during Task 6 verification: smooth scrolling is itself an animation). Lenis replaces it entirely.
+
 - [ ] **Step 2: Initialize in `js/main.js`** (inside the DOMContentLoaded handler, after the init calls):
 
 ```js
