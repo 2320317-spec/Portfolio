@@ -5,5 +5,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrub();
   initProjectPills();
   initLongShadow();
-  initLetterZoom();
+  initWatermark();
 });

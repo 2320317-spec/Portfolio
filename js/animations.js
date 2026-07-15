@@ -121,68 +121,111 @@ function initLongShadow() {
   el.style.setProperty('--shadow-reach', (STEPS * STEP_EM).toFixed(3) + 'em');
 }
 
-/* ---- #9 Proximity letter zoom (footer watermark) ---- */
-/* Jelly edition: each letter is a spring. The mouse only sets
-   TARGETS; a frame loop integrates spring physics toward them,
-   so letters overshoot, wobble, and settle like jelly.
+/* ---- #9 Watermark: scroll-sprout + proximity jelly ---- */
+/* Two forces, one spring system. Each letter carries two springs:
+     sprout — driven by SCROLL. transform-origin is bottom center, so
+              scaleY(0) squashes the letter flat into the ground line
+              and growing it to 1 makes it rise out. The long shadow
+              scales with it, so a half-grown letter casts a half-length
+              shadow for free.
+     hover  — driven by the MOUSE (the jelly zoom).
+   Neither input ever sets a size directly: they set TARGETS, and the
+   frame loop integrates physics toward them. That's why letters
+   overshoot, wobble, and settle instead of gliding.
    User-approved tuning — do not change without asking Myke:
    MAX 0.18, RADIUS 170, lift 4px. Jelly knobs: STIFFNESS, DAMPING. */
-function initLetterZoom() {
+function initWatermark() {
   const el = document.getElementById('watermark');
   if (!el) return;
   splitLetters(el); // reuse the Task 3 splitter
-  if (REDUCE_MOTION || !window.matchMedia('(hover: hover)').matches) return;
-
   const letters = [...el.querySelectorAll('.letter')];
+  // No JS motion => CSS default (transform: none) leaves the name fully
+  // visible. The name is never hidden behind an interaction.
+  if (!letters.length || REDUCE_MOTION) return;
+
   const RADIUS = 170;
   const MAX = 0.18;
   const STIFFNESS = 0.12; // spring pull: higher = snappier
   const DAMPING = 0.72;   // friction: lower = wobblier jelly
+  const SPREAD = 0.55;    // knob: share of the scroll window spent staggering
 
-  // Cache letter centers in page coordinates (transforms don't move
-  // layout, but they DO skew getBoundingClientRect — so measure once
-  // at rest, and again on resize).
+  // Cache letter centers in page coordinates. Transforms don't move
+  // layout, but they DO skew getBoundingClientRect — so clear them
+  // while measuring, then put them back.
   let centers = [];
   function measure() {
+    const saved = letters.map(l => l.style.transform);
+    letters.forEach(l => { l.style.transform = 'none'; });
     centers = letters.map(l => {
       const r = l.getBoundingClientRect();
       return r.left + r.width / 2 + window.scrollX;
     });
+    letters.forEach((l, i) => { l.style.transform = saved[i]; });
   }
   measure();
   window.addEventListener('resize', measure);
 
-  // One spring per letter: c = current closeness, v = velocity.
-  const springs = letters.map(() => ({ c: 0, v: 0, target: 0 }));
+  // Two springs per letter. c = current value, v = velocity.
+  const springs = letters.map(() => ({
+    sprout: { c: 0, v: 0, target: 0 },
+    hover:  { c: 0, v: 0, target: 0 }
+  }));
+  letters.forEach(l => { l.style.transform = 'scale(1, 0)'; }); // start buried
+
   let rafId = null;
+
+  function step(sp) {
+    sp.v += (sp.target - sp.c) * STIFFNESS; // spring force
+    sp.v *= DAMPING;                        // friction
+    sp.c += sp.v;
+    return Math.abs(sp.v) > 0.0005 || Math.abs(sp.target - sp.c) > 0.0005;
+  }
 
   function tick() {
     let active = false;
-    springs.forEach((sp, i) => {
-      sp.v += (sp.target - sp.c) * STIFFNESS; // spring force
-      sp.v *= DAMPING;                        // friction
-      sp.c += sp.v;
-      if (Math.abs(sp.v) > 0.0005 || Math.abs(sp.target - sp.c) > 0.0005) active = true;
-      const scale = 1 + MAX * sp.c * sp.c;
+    springs.forEach((s, i) => {
+      if (step(s.sprout)) active = true;
+      if (step(s.hover)) active = true;
+      const grow = 1 + MAX * s.hover.c * s.hover.c; // jelly bump
+      const lift = -4 * s.hover.c * s.sprout.c;     // no lift while buried
       letters[i].style.transform =
-        `scale(${scale.toFixed(3)}) translateY(${(-4 * sp.c).toFixed(1)}px)`;
+        `translateY(${lift.toFixed(1)}px) scale(${grow.toFixed(3)}, ${(grow * s.sprout.c).toFixed(3)})`;
     });
     rafId = active ? requestAnimationFrame(tick) : null; // sleep when settled
   }
   function wake() { if (rafId === null) rafId = requestAnimationFrame(tick); }
 
-  el.addEventListener('mousemove', (e) => {
-    letters.forEach((l, i) => {
-      const dist = Math.abs(e.pageX - centers[i]);
-      springs[i].target = Math.max(0, 1 - dist / RADIUS);
+  // SCROLL sets sprout targets, staggered so letters break ground in
+  // sequence (same measure -> normalize -> map recipe as the scrub).
+  function onScroll() {
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const progress = Math.min(1, Math.max(0, (vh - rect.top) / (vh * 0.55)));
+    const n = letters.length;
+    springs.forEach((s, i) => {
+      const start = n > 1 ? (i / (n - 1)) * SPREAD : 0; // this letter's turn
+      const local = (progress - start) / (1 - SPREAD);  // its own 0..1
+      s.sprout.target = Math.min(1, Math.max(0, local));
     });
     wake();
-  });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-  el.addEventListener('mouseleave', () => {
-    springs.forEach(sp => { sp.target = 0; });
-    wake();
-  });
+  // MOUSE sets hover targets — only where hovering exists.
+  if (window.matchMedia('(hover: hover)').matches) {
+    el.addEventListener('mousemove', (e) => {
+      springs.forEach((s, i) => {
+        const dist = Math.abs(e.pageX - centers[i]);
+        s.hover.target = Math.max(0, 1 - dist / RADIUS);
+      });
+      wake();
+    });
+    el.addEventListener('mouseleave', () => {
+      springs.forEach(s => { s.hover.target = 0; });
+      wake();
+    });
+  }
 }
 
 /* ---- #8 Cursor-following "View project" pill ---- */

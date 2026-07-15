@@ -82,3 +82,13 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Single source of truth:** JS publishes `--shadow-reach`; the CSS margin is derived from it. Retune the knobs and the spacing follows — no silent collisions.
 - **`max(3rem, calc(...))`:** picks whichever is bigger — the em-based clearance on desktop, or a 3rem floor for layout breathing room on phones. One line covers both worlds.
 - **Whoever casts the shadow reserves the room:** spacing moved onto `.watermark` instead of the CTA below it. Responsibility belongs with the cause.
+
+## Task 8d — Scroll-sprout (`initLetterZoom` → `initWatermark`)
+- **The design call:** hover-to-reveal was rejected — it would hide my own name until someone mouses over it, and hide it *forever* on phones. Scroll reveals it (works everywhere); hover still plays with it. **Never put essential content behind an interaction.**
+- **`scaleY(0)` + `transform-origin: bottom center` = buried.** The letter squashes flat into its baseline; growing to 1 makes it rise out. No mask needed — which matters, because a mask would have clipped the long shadow.
+- **Free correctness:** the shadow is part of the glyph, so it scales with the letter — a half-grown letter casts a half-length shadow without a line of code.
+- **Two springs, one letter:** `sprout` (scroll-driven) and `hover` (mouse-driven), combined at paint time as `scale(grow, grow × sprout)`. Independent inputs, shared physics.
+- **Staggering a scrub:** each letter gets its own slice of the scroll window — `local = (progress − i×SPREAD/n) / (1−SPREAD)`. Verified: 30% scroll → `.67 .56 .44 .33 .22 .11 0…` — a wave front rolling through the word.
+- **Squash and stretch:** the spring overshoots to 1.154× height on breaking ground, then settles. One of Disney's 12 animation principles, falling out of the physics for free.
+- **Measure what you can't see:** confirmed scroll progress reaches exactly 1.0 at max scroll — otherwise the last letters would have stayed buried forever, and no amount of staring would have explained why.
+- **New knob:** `SPREAD` 0.55 — share of the scroll window spent staggering. Higher = more of a rolling wave; 0 = all letters pop together.
