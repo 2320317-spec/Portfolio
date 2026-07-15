@@ -38,3 +38,9 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Proof:** disabling transitions entirely made styles apply instantly → CSS logic was correct all along.
 - **Root cause:** the preview environment was a throttled renderer producing no animation frames — IntersectionObserver and transitions starve without frames.
 - **Lesson:** sometimes the bug is in the test equipment, not the code. Prove it with a controlled experiment; final verification belongs in a real browser.
+
+## Task 6 — Scroll-linked word highlight
+- **Trigger vs scrub:** a trigger fires once (reveal); a scrub is welded to scroll position and runs both directions, like dragging a video timeline.
+- **The measure → normalize → map recipe:** read position with `getBoundingClientRect()`, convert to a 0–1 progress number, then map progress onto the effect (60% progress = 60% of words lit). Reusable for endless scroll effects.
+- **`scroll-behavior: smooth` is an animation too:** programmatic `scrollTo` glides instead of jumping — pass `behavior: 'instant'` when you need to jump (e.g. in tests).
+- **Split-into-spans, third appearance:** cascade (by letter), scrub (by word). Same core trick, different unit and driver.

@@ -2,4 +2,5 @@
 document.addEventListener('DOMContentLoaded', () => {
   initCascade();
   initReveals();
+  initScrub();
 });

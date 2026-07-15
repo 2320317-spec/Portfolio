@@ -157,6 +157,23 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   .about-grid { grid-template-columns: 1fr; }
 }
 
+/* ============ #7 SCROLL-LINKED HIGHLIGHT ============ */
+.statement {
+  background: var(--ink);
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+}
+.statement-text {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 5vw, 4rem);
+  line-height: 1.2;
+  text-transform: uppercase;
+  max-width: 60rem;
+}
+.statement-text .word { color: #4a4a45; transition: color .25s ease; }
+.statement-text .word.lit { color: var(--cream); }
+
 /* ============ ACCESSIBILITY ============ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

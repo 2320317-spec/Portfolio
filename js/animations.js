@@ -61,3 +61,36 @@ function initReveals() {
 
   targets.forEach(el => io.observe(el));
 }
+
+/* ---- #7 Scroll-linked word highlight ------------ */
+/* Unlike a reveal (fires once), a scrub is TIED to scroll
+   position: progress 0..1 decides how many words are lit,
+   so scrolling back dims them again. */
+function initScrub() {
+  const el = document.querySelector('[data-scrub]');
+  if (!el) return;
+
+  const words = el.textContent.trim().split(/\s+/);
+  el.innerHTML = words.map(w => `<span class="word">${w}</span>`).join(' ');
+  const spans = el.querySelectorAll('.word');
+
+  if (REDUCE_MOTION) {
+    spans.forEach(s => s.classList.add('lit'));
+    return;
+  }
+
+  const section = el.closest('section');
+
+  function onScroll() {
+    const rect = section.getBoundingClientRect();
+    const vh = window.innerHeight;
+    // 0 when the section's top reaches 85% down the screen,
+    // 1 when it reaches 30% — i.e. lights sweep on while it rises.
+    const progress = Math.min(1, Math.max(0, (vh * 0.85 - rect.top) / (vh * 0.55)));
+    const lit = Math.round(progress * spans.length);
+    spans.forEach((s, i) => s.classList.toggle('lit', i < lit));
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
