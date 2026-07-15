@@ -56,3 +56,9 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Root cause:** our dev server sent no `Cache-Control` header, so the browser used "heuristic caching" and served old copies of files.
 - **Fix at the root:** dev server now sends `Cache-Control: no-store` — browsers must always fetch fresh during development.
 - **Lesson:** HTTP caching is a real protocol layer between your editor and your browser. When code "doesn't update," check what the browser actually loaded (hard refresh = Ctrl+Shift+R bypasses cache).
+
+## Task 8 — Footer + letter zoom + underline sweep
+- **DRY payoff:** `splitLetters()` from Task 3 reused unchanged for the watermark — one function now powers two different animations (load cascade + mouse zoom).
+- **Proximity math:** distance → closeness (0–1) → `scale = 1 + MAX × closeness²`. Squaring the closeness makes falloff feel organic. Four numbers define the whole personality.
+- **`::after` pseudo-elements:** CSS can conjure a phantom child element — the underline is drawn by CSS, no extra HTML. `transform-origin` right→left flip makes it exit the opposite way it entered.
+- **Tone-on-tone:** the watermark is a lighter shade of the footer's own violet — presence without shouting. Cheap trick, expensive look.

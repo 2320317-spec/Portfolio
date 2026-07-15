@@ -95,6 +95,35 @@ function initScrub() {
   onScroll();
 }
 
+/* ---- #9 Proximity letter zoom (footer watermark) ---- */
+/* User-approved tuning — do not change without asking Myke:
+   MAX 0.18, RADIUS 170, lift 4px, transition .18s (in CSS). */
+function initLetterZoom() {
+  const el = document.getElementById('watermark');
+  if (!el) return;
+  splitLetters(el); // reuse the Task 3 splitter
+  if (REDUCE_MOTION || !window.matchMedia('(hover: hover)').matches) return;
+
+  const letters = el.querySelectorAll('.letter');
+  const RADIUS = 170;
+  const MAX = 0.18;
+
+  el.addEventListener('mousemove', (e) => {
+    letters.forEach(l => {
+      const rect = l.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const dist = Math.abs(e.clientX - centerX);
+      const closeness = Math.max(0, 1 - dist / RADIUS);
+      const scale = 1 + MAX * closeness * closeness;
+      l.style.transform = `scale(${scale.toFixed(3)}) translateY(${(-4 * closeness).toFixed(1)}px)`;
+    });
+  });
+
+  el.addEventListener('mouseleave', () => {
+    letters.forEach(l => { l.style.transform = ''; });
+  });
+}
+
 /* ---- #8 Cursor-following "View project" pill ---- */
 function initProjectPills() {
   if (!window.matchMedia('(hover: hover)').matches) return; // touch: skip
