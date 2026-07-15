@@ -294,6 +294,15 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   transform-origin: bottom center;
   will-change: transform;
 }
+/* The ground each word rises out of. Negative insets push the clip region
+   OUTSIDE the box: sides and top open so the slab and jelly can spill, and
+   the bottom edge parked --shadow-reach below the box so the whole shadow
+   shows at rest while letters parked under that line stay invisible.
+   `overflow: hidden` can't do this — it clips at the box, which would slice
+   the shadow off, and it also rewrites inline-block baselines. */
+.watermark .word-wrap {
+  clip-path: inset(-1em -1em calc(-1 * var(--shadow-reach, 0em)) -1em);
+}
 /* Spacing lives on .watermark — the element casting the shadow owns
    reserving room for it. */
 .footer-cta { margin-top: 0; }

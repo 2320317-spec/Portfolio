@@ -123,11 +123,9 @@ function initLongShadow() {
 
 /* ---- #9 Watermark: scroll-sprout + proximity jelly ---- */
 /* Two forces, one spring system. Each letter carries two springs:
-     sprout — driven by SCROLL. transform-origin is bottom center, so
-              scaleY(0) squashes the letter flat into the ground line
-              and growing it to 1 makes it rise out. The long shadow
-              scales with it, so a half-grown letter casts a half-length
-              shadow for free.
+     sprout — driven by SCROLL. The letter is parked below the ground
+              line (the clip edge set in CSS) and rises out of it as a
+              rigid body, dragging its shadow up into view with it.
      hover  — driven by the MOUSE (the jelly zoom).
    Neither input ever sets a size directly: they set TARGETS, and the
    frame loop integrates physics toward them. That's why letters
@@ -153,6 +151,7 @@ function initWatermark() {
   // layout, but they DO skew getBoundingClientRect — so clear them
   // while measuring, then put them back.
   let centers = [];
+  let buryPx = 0;
   function measure() {
     const saved = letters.map(l => l.style.transform);
     letters.forEach(l => { l.style.transform = 'none'; });
@@ -160,6 +159,16 @@ function initWatermark() {
       const r = l.getBoundingClientRect();
       return r.left + r.width / 2 + window.scrollX;
     });
+    // How deep to park a letter: its own height plus the shadow slab
+    // hanging beneath it, so nothing pokes above the ground line.
+    // --shadow-reach comes from initLongShadow(), which main.js runs
+    // first — retune the shadow and the burial depth follows.
+    // +4 of slack: without it the letter's box top lands a hair ABOVE the
+    // ground line, and it only stays hidden because Archivo Black happens
+    // to leave space above its capitals. Don't depend on font metrics.
+    const reachEm = parseFloat(el.style.getPropertyValue('--shadow-reach')) || 0;
+    buryPx = letters[0].getBoundingClientRect().height +
+             reachEm * parseFloat(getComputedStyle(el).fontSize) + 4;
     letters.forEach((l, i) => { l.style.transform = saved[i]; });
   }
   measure();
@@ -170,7 +179,7 @@ function initWatermark() {
     sprout: { c: 0, v: 0, target: 0 },
     hover:  { c: 0, v: 0, target: 0 }
   }));
-  letters.forEach(l => { l.style.transform = 'scale(1, 0)'; }); // start buried
+  letters.forEach(l => { l.style.transform = `translateY(${buryPx}px)`; }); // underground
 
   let rafId = null;
 
@@ -187,9 +196,10 @@ function initWatermark() {
       if (step(s.sprout)) active = true;
       if (step(s.hover)) active = true;
       const grow = 1 + MAX * s.hover.c * s.hover.c; // jelly bump
-      const lift = -4 * s.hover.c * s.sprout.c;     // no lift while buried
+      const rise = (1 - s.sprout.c) * buryPx;       // 1 => home, 0 => buried
+      const lift = -4 * s.hover.c;                  // jelly's little hop
       letters[i].style.transform =
-        `translateY(${lift.toFixed(1)}px) scale(${grow.toFixed(3)}, ${(grow * s.sprout.c).toFixed(3)})`;
+        `translateY(${(rise + lift).toFixed(1)}px) scale(${grow.toFixed(3)})`;
     });
     rafId = active ? requestAnimationFrame(tick) : null; // sleep when settled
   }

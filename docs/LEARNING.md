@@ -85,10 +85,12 @@ Concepts I used and can explain. One line each; details in the linked code.
 
 ## Task 8d — Scroll-sprout (`initLetterZoom` → `initWatermark`)
 - **The design call:** hover-to-reveal was rejected — it would hide my own name until someone mouses over it, and hide it *forever* on phones. Scroll reveals it (works everywhere); hover still plays with it. **Never put essential content behind an interaction.**
-- **`scaleY(0)` + `transform-origin: bottom center` = buried.** The letter squashes flat into its baseline; growing to 1 makes it rise out. No mask needed — which matters, because a mask would have clipped the long shadow.
-- **Free correctness:** the shadow is part of the glyph, so it scales with the letter — a half-grown letter casts a half-length shadow without a line of code.
-- **Two springs, one letter:** `sprout` (scroll-driven) and `hover` (mouse-driven), combined at paint time as `scale(grow, grow × sprout)`. Independent inputs, shared physics.
+- **Grow ≠ rise (v1 was wrong):** `scaleY(0→1)` squashes and inflates the letter in place. It reads as *growing*, not *rising*. A real rise is `translateY` — the letter moves as a rigid body, keeping its shape.
+- **A rise needs a ground line to hide behind**, and that's the hard part: `overflow: hidden` clips at the box, which would slice the long shadow off (and it silently rewrites inline-block baselines — a classic CSS trap).
+- **`clip-path: inset()` takes NEGATIVE values**, so the clip region can be *bigger* than the element. Sides and top pushed out (slab + jelly spill freely), bottom parked `--shadow-reach` below the box = the ground line, with the whole shadow above it. This is the trick that made the whole effect possible.
+- **Don't rely on font metrics:** parked exactly at the ground, the letter's box top landed 0.25px *above* the line — hidden only because Archivo Black leaves space over its capitals. Another font would leak a sliver. Added 4px of explicit slack.
+- **Two springs, one letter:** `sprout` (scroll-driven rise, in px) and `hover` (mouse-driven jelly), combined at paint time as `translateY(rise + lift) scale(grow)`. Independent inputs, shared physics.
 - **Staggering a scrub:** each letter gets its own slice of the scroll window — `local = (progress − i×SPREAD/n) / (1−SPREAD)`. Verified: 30% scroll → `.67 .56 .44 .33 .22 .11 0…` — a wave front rolling through the word.
-- **Squash and stretch:** the spring overshoots to 1.154× height on breaking ground, then settles. One of Disney's 12 animation principles, falling out of the physics for free.
+- **Overshoot for free:** the spring peaks at 1.154, so a letter sails ~30px *past* its resting spot before settling back — a bounce nobody had to script. It falls out of the physics.
 - **Measure what you can't see:** confirmed scroll progress reaches exactly 1.0 at max scroll — otherwise the last letters would have stayed buried forever, and no amount of staring would have explained why.
 - **New knob:** `SPREAD` 0.55 — share of the scroll window spent staggering. Higher = more of a rolling wave; 0 = all letters pop together.
