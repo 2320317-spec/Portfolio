@@ -96,31 +96,66 @@ function initScrub() {
 }
 
 /* ---- #9 Proximity letter zoom (footer watermark) ---- */
-/* User-approved tuning — do not change without asking Myke:
-   MAX 0.18, RADIUS 170, lift 4px, transition .18s (in CSS). */
+/* Jelly edition: each letter is a spring. The mouse only sets
+   TARGETS; a frame loop integrates spring physics toward them,
+   so letters overshoot, wobble, and settle like jelly.
+   User-approved tuning — do not change without asking Myke:
+   MAX 0.18, RADIUS 170, lift 4px. Jelly knobs: STIFFNESS, DAMPING. */
 function initLetterZoom() {
   const el = document.getElementById('watermark');
   if (!el) return;
   splitLetters(el); // reuse the Task 3 splitter
   if (REDUCE_MOTION || !window.matchMedia('(hover: hover)').matches) return;
 
-  const letters = el.querySelectorAll('.letter');
+  const letters = [...el.querySelectorAll('.letter')];
   const RADIUS = 170;
   const MAX = 0.18;
+  const STIFFNESS = 0.12; // spring pull: higher = snappier
+  const DAMPING = 0.72;   // friction: lower = wobblier jelly
+
+  // Cache letter centers in page coordinates (transforms don't move
+  // layout, but they DO skew getBoundingClientRect — so measure once
+  // at rest, and again on resize).
+  let centers = [];
+  function measure() {
+    centers = letters.map(l => {
+      const r = l.getBoundingClientRect();
+      return r.left + r.width / 2 + window.scrollX;
+    });
+  }
+  measure();
+  window.addEventListener('resize', measure);
+
+  // One spring per letter: c = current closeness, v = velocity.
+  const springs = letters.map(() => ({ c: 0, v: 0, target: 0 }));
+  let rafId = null;
+
+  function tick() {
+    let active = false;
+    springs.forEach((sp, i) => {
+      sp.v += (sp.target - sp.c) * STIFFNESS; // spring force
+      sp.v *= DAMPING;                        // friction
+      sp.c += sp.v;
+      if (Math.abs(sp.v) > 0.0005 || Math.abs(sp.target - sp.c) > 0.0005) active = true;
+      const scale = 1 + MAX * sp.c * sp.c;
+      letters[i].style.transform =
+        `scale(${scale.toFixed(3)}) translateY(${(-4 * sp.c).toFixed(1)}px)`;
+    });
+    rafId = active ? requestAnimationFrame(tick) : null; // sleep when settled
+  }
+  function wake() { if (rafId === null) rafId = requestAnimationFrame(tick); }
 
   el.addEventListener('mousemove', (e) => {
-    letters.forEach(l => {
-      const rect = l.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const dist = Math.abs(e.clientX - centerX);
-      const closeness = Math.max(0, 1 - dist / RADIUS);
-      const scale = 1 + MAX * closeness * closeness;
-      l.style.transform = `scale(${scale.toFixed(3)}) translateY(${(-4 * closeness).toFixed(1)}px)`;
+    letters.forEach((l, i) => {
+      const dist = Math.abs(e.pageX - centers[i]);
+      springs[i].target = Math.max(0, 1 - dist / RADIUS);
     });
+    wake();
   });
 
   el.addEventListener('mouseleave', () => {
-    letters.forEach(l => { l.style.transform = ''; });
+    springs.forEach(sp => { sp.target = 0; });
+    wake();
   });
 }
 

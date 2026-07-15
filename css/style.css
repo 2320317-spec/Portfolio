@@ -274,11 +274,11 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   user-select: none;
 }
 .watermark .letter {
-  /* override cascade defaults: watermark letters are always visible */
+  /* override cascade defaults: watermark letters are always visible.
+     No transition here — the jelly spring loop drives every frame. */
   opacity: 1;
   animation: none;
   transform: none;
-  transition: transform .18s ease-out;
   transform-origin: bottom center;
   will-change: transform;
 }
