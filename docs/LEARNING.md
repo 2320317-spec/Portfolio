@@ -120,3 +120,11 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Cause:** the automated preview pane's viewport had collapsed to `innerHeight: 0`, so `100svh` resolved to `0px` and the pin had no height. Environment, not code (cousin of Bug #2).
 - **The tell:** two sign errors cancelled and the progress curve *looked* plausible. A passing test on garbage input is worse than a failing one — sanity-check the inputs (`travelIsPositive`), not just the outputs.
 - **The guard earned its keep:** `if (travel > 0)` meant the real site degraded to a plain reveal instead of dividing by nonsense. Defensive guards are for the states you didn't imagine.
+
+## Bug #5 — Measuring the wrong element (the statement scrub)
+- **Symptom:** the words were already lit by the time the statement scrolled into view. It looked like a timing preference; it was a bug.
+- **Root cause:** progress was driven by the **section's** top, but the thing animating is the **text**, centred inside a section 2.3x taller than it — so the formula tracked a point ~360px above the actual target. Measured: the sweep *started* with the text's middle at 130% down the screen (below the fold), was halfway at 102% (still invisible), and *finished* at 75% — before the text ever reached the centre. The entire animation played to an empty screen.
+- **Fix:** measure the element you're animating. Progress now maps the **text's own middle**: 60% down the screen → start, 25% → fully lit. Verified: 0/9 lit at 60%, 3/9 at dead centre, 9/9 at 25%, and the text is fully on screen the whole way.
+- **The rule:** *drive the animation from the thing that moves.* A parent's rect is not a proxy for a child's position — any padding, centring, or min-height silently offsets it.
+- **Knobs:** `CENTRE_START` 0.60 / `CENTRE_END` 0.25 — where on the screen the sweep begins and ends, in viewport fractions.
+- **"It feels early" is a measurement, not an opinion.** Myke described a feeling; the numbers turned it into an off-by-360px bug with a one-line fix.

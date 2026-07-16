@@ -79,14 +79,19 @@ function initScrub() {
     return;
   }
 
-  const section = el.closest('section');
+  // Measure the TEXT, not its section. The section is ~2.3x taller than
+  // the text and the text sits centred inside it, so driving off the
+  // section's top tracked a point ~360px above the thing being animated:
+  // the whole sweep finished while the text was still below the fold.
+  const CENTRE_START = 0.60; // text's middle just under the centre line -> begin
+  const CENTRE_END = 0.25;   // ...risen to near the top -> fully lit
 
   function onScroll() {
-    const rect = section.getBoundingClientRect();
+    const rect = el.getBoundingClientRect();
+    const mid = rect.top + rect.height / 2;
     const vh = window.innerHeight;
-    // 0 when the section's top reaches 85% down the screen,
-    // 1 when it reaches 30% — i.e. lights sweep on while it rises.
-    const progress = Math.min(1, Math.max(0, (vh * 0.85 - rect.top) / (vh * 0.55)));
+    const progress = Math.min(1, Math.max(0,
+      (vh * CENTRE_START - mid) / (vh * (CENTRE_START - CENTRE_END))));
     const lit = Math.round(progress * spans.length);
     spans.forEach((s, i) => s.classList.toggle('lit', i < lit));
   }
