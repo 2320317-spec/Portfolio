@@ -193,3 +193,9 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Side-by-side slots:** horizontal offset per tab (`margin-right: pad + index × 6.6rem`) instead of vertical stacking — like tabs along a notebook's edge.
 - **Palette variety without breaking palette:** four shades already in the tokens (violet, ink, violet-light, lavender) give notebook-color variety while staying royal.
 - **Micro-interaction matches the metaphor:** hover tugs the bookmark down 4px instead of scaling — the motion a real tab would make.
+
+## Bug #6 — Vanishing tabs on the Contact sheet
+- **Symptom:** scrolling into the pinned footer, About/Focus/Projects tabs disappeared; only Contact remained.
+- **Root cause:** sticky elements cannot outlive their parent. The tabs' parent was `<main>`, which ENDED where the footer began — so the tabs slid away with main's bottom edge exactly as the footer took the screen.
+- **Fix:** moved the footer inside `<main>` so the tabs' territory spans the whole page. Verified: all four tabs pinned at top 0 while the footer covers.
+- **Lesson:** every sticky element has a territory (its parent's box). When something sticky vanishes, ask "whose child is it, and where does that parent end?"

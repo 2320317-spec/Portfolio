@@ -123,8 +123,10 @@
     </section>
     </div>
 
-  </main>
-
+  <!-- Inside <main> on purpose: the bookmark tabs are sticky children of
+       main and sticky elements cannot outlive their parent — if main
+       ended here, the tabs would slide away exactly when the footer
+       takes the screen. -->
   <div class="footer-pin">
   <a class="tab tab-t4" style="--ti:3" href="#contact">Contact</a>
   <footer class="site-footer" id="contact">
@@ -145,6 +147,8 @@
     </div>
   </footer>
   </div>
+
+  </main>
 
   <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
 <script src="js/animations.js"></script>
