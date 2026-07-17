@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initLongShadow();
   initWatermark();
   initDotGrid();
+  initSheets();
   initCurtain();
 
   // #6 Smooth scroll — the only external library, added last.

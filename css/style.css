@@ -482,6 +482,24 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
 .arch-node-accent { background: var(--violet); border-color: var(--violet); color: var(--cream); }
 .arch-arrow { font-weight: 700; color: #8a8072; }
 
+/* ============ STACKING SHEETS ============ */
+/* Every homepage section is a "sheet". Each one docks at the top of the
+   viewport (position: sticky) and the NEXT sheet — later in the DOM, so
+   painted above — slides up and covers it, like sheets of paper piling.
+   Sheets taller than the viewport get a negative --sheet-top from
+   initSheets() so they dock when their BOTTOM lands, never hiding
+   content. Opaque background is what sells the stack: the sheet below
+   must vanish completely. Costs no scroll length — heights add up the
+   same as normal flow. */
+.sheet {
+  position: sticky;
+  top: var(--sheet-top, 0px);
+  background: var(--cream);
+  min-height: 100svh;
+  /* soft top edge so the arriving sheet reads as paper over paper */
+  box-shadow: 0 -18px 40px rgba(27, 21, 48, .12);
+}
+
 /* ============ BOOKMARK TABS (sticky section nav) ============ */
 /* Each tab is a sticky child of <main>, so it rides with its section,
    pins near the top at its own offset (--ti = stack index), and STAYS

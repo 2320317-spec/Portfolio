@@ -83,8 +83,11 @@ function initScrub() {
   // the text and the text sits centred inside it, so driving off the
   // section's top tracked a point ~360px above the thing being animated:
   // the whole sweep finished while the text was still below the fold.
-  const CENTRE_START = 0.60; // text's middle just under the centre line -> begin
-  const CENTRE_END = 0.25;   // ...risen to near the top -> fully lit
+  // Stacking-sheet tuning: once the Focus sheet DOCKS, its text freezes
+  // at 50% of the viewport and can never rise further — so the sweep
+  // must complete during the slide-in, finishing just before dock.
+  const CENTRE_START = 0.78; // text's middle rising into view -> begin
+  const CENTRE_END = 0.52;   // ...docked at centre -> fully lit
 
   function onScroll() {
     const rect = el.getBoundingClientRect();
@@ -386,6 +389,25 @@ function initDotGrid() {
   }
   build();
   window.addEventListener('resize', build);
+}
+
+/* ---- Stacking sheets: dock taller-than-viewport sheets by their bottom ---- */
+/* sticky top: 0 pins a sheet the moment its top hits the viewport top —
+   which would freeze a TALL sheet before its lower content was ever
+   reachable. Giving those sheets top: (viewport - height), a negative
+   number, makes them dock when their bottom lands instead. */
+function initSheets() {
+  const sheets = document.querySelectorAll('.sheet');
+  if (!sheets.length) return;
+  function measure() {
+    const vh = window.innerHeight;
+    sheets.forEach(s => {
+      const overflow = s.offsetHeight - vh;
+      s.style.setProperty('--sheet-top', overflow > 0 ? -overflow + 'px' : '0px');
+    });
+  }
+  measure();
+  window.addEventListener('resize', measure);
 }
 
 /* ---- Curtain page transition ---- */

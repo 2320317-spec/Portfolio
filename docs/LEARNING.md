@@ -181,3 +181,9 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Why added LAST:** every scroll system was built and understood on raw scrolling first; the library polishes, it doesn't carry. And the Task 6 landmine paid off: CSS `scroll-behavior: smooth` was removed on schedule — two smoothing systems fight over one scrollbar.
 - **Anchor jumps re-wired:** with CSS smooth gone, bookmark-tab clicks glide via `lenis.scrollTo(target)` instead.
 - **The trade-off:** first external dependency (CDN). Convenience vs control — taken knowingly, once, at the end.
+
+## Stacking sheets (whole-page card stack)
+- **The pattern:** every section is `position: sticky; top: 0` — it docks at the viewport top, and the next section (later in the DOM, so painted above) slides up and covers it. Paper piling on paper; costs zero extra scroll length.
+- **Tall sheets dock by their bottom:** `top: 0` would pin a taller-than-viewport sheet before its lower content was reachable. `initSheets()` gives those a negative top = (viewport − height), so they pin when their bottom lands. Measured per sheet, recomputed on resize.
+- **Opaque backgrounds sell the stack** — the sheet below must vanish completely; a soft top shadow makes the arriving sheet read as paper over paper.
+- **Stacking changed a tuned system:** once the Focus sheet docks, its text freezes at 50% viewport — the scrub could never finish under the old mapping. Retuned to complete during the slide-in (start .78 → done .52). Every layout change re-tests every scroll-driven system.
