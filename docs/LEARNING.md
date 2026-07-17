@@ -128,3 +128,9 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **The rule:** *drive the animation from the thing that moves.* A parent's rect is not a proxy for a child's position — any padding, centring, or min-height silently offsets it.
 - **Knobs:** `CENTRE_START` 0.60 / `CENTRE_END` 0.25 — where on the screen the sweep begins and ends, in viewport fractions.
 - **"It feels early" is a measurement, not an opinion.** Myke described a feeling; the numbers turned it into an off-by-360px bug with a one-line fix.
+
+## Task 9 — Case-study template (multi-page)
+- **Relative paths:** `../css/style.css` = "up one folder, then css/". Pages in `projects/` reach shared assets with `../`; the home page uses plain `css/`.
+- **One stylesheet, many pages:** every page links the same style.css, so a token change (`--violet`) updates the whole site at once.
+- **Animations came free:** the new page has zero new JS. `data-cascade` and `data-reveal` just work because each init function finds its own elements and no-ops when absent.
+- **Component classes (`.cs-*`) beat per-page styles:** Tasks 10–11 copy this skeleton and inherit the look — a mini design system.
