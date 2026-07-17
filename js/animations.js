@@ -312,6 +312,82 @@ function initProjectPills() {
   });
 }
 
+/* ---- Interactive dot grid (dark statement background) ---- */
+/* ~1100 dots on one canvas. Near the cursor a dot "excites": it breaks
+   from the grid and orbits its home point on a randomized tilted plane
+   (a squashed + rotated ellipse — 2D faking 3D). Excitement eases with
+   cursor distance, so the swarm blooms around the pointer and dots far
+   away never move. Sleeps when everything is home. */
+function initDotGrid() {
+  const section = document.querySelector('.statement');
+  if (!section || REDUCE_MOTION) return;
+
+  const canvas = document.createElement('canvas');
+  canvas.className = 'dot-grid';
+  canvas.setAttribute('aria-hidden', 'true');
+  section.prepend(canvas);
+  const ctx = canvas.getContext('2d');
+
+  const GAP = 28;      // grid spacing
+  const RADIUS = 120;  // cursor influence
+  const DPR = Math.min(2, window.devicePixelRatio || 1);
+  let dots = [], w = 0, h = 0;
+
+  function build() {
+    w = section.clientWidth; h = section.clientHeight;
+    canvas.width = w * DPR; canvas.height = h * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    dots = [];
+    for (let y = GAP; y < h; y += GAP)
+      for (let x = GAP; x < w; x += GAP)
+        dots.push({
+          hx: x, hy: y,                  // home on the grid
+          e: 0,                          // excitement 0..1
+          th: Math.random() * 6.283,     // orbit angle
+          r: 5 + Math.random() * 9,      // orbit size
+          sq: .25 + Math.random() * .75, // inclination (ellipse squash)
+          tilt: Math.random() * 6.283,   // orbit plane rotation
+          w: (Math.random() < .5 ? -1 : 1) * (.02 + Math.random() * .04)
+        });
+    wake();
+  }
+
+  let mx = -1e4, my = -1e4, inside = false, rafId = null;
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    let active = inside;
+    for (const d of dots) {
+      const target = inside
+        ? Math.max(0, 1 - Math.hypot(mx - d.hx, my - d.hy) / RADIUS) : 0;
+      d.e += (target - d.e) * .08;       // ease toward excitement
+      if (d.e > .004) { active = true; d.th += d.w; } else d.e = 0;
+      // circle -> squash (inclination) -> rotate (plane) -> scale by e
+      const ox = Math.cos(d.th) * d.r, oy = Math.sin(d.th) * d.r * d.sq;
+      const px = d.hx + (ox * Math.cos(d.tilt) - oy * Math.sin(d.tilt)) * d.e;
+      const py = d.hy + (ox * Math.sin(d.tilt) + oy * Math.cos(d.tilt)) * d.e;
+      const b = Math.round(58 + 170 * d.e); // idle: faint; excited: bright
+      ctx.fillStyle = `rgb(${b},${b},${b})`;
+      ctx.beginPath();
+      ctx.arc(px, py, 1 + d.e * .9, 0, 6.283);
+      ctx.fill();
+    }
+    rafId = active ? requestAnimationFrame(draw) : null; // sleep at rest
+  }
+  function wake() { if (rafId === null) rafId = requestAnimationFrame(draw); }
+
+  if (window.matchMedia('(hover: hover)').matches) {
+    section.addEventListener('mousemove', (e) => {
+      const rect = section.getBoundingClientRect();
+      mx = e.clientX - rect.left; my = e.clientY - rect.top;
+      inside = true; wake();
+    });
+    section.addEventListener('mouseleave', () => { inside = false; wake(); });
+  }
+  build();
+  window.addEventListener('resize', build);
+}
+
 /* ---- Curtain page transition ---- */
 /* Exit: intercept internal link clicks, drop the panels, THEN navigate.
    A sessionStorage flag tells the next page it arrived via curtain, so

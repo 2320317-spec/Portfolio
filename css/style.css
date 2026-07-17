@@ -481,6 +481,15 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
 .arch-node-accent { background: var(--violet); border-color: var(--violet); color: var(--cream); }
 .arch-arrow { font-weight: 700; color: #8a8072; }
 
+/* ============ DOT GRID (statement background) ============ */
+.statement { position: relative; }
+.dot-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* the section handles the mouse, not the canvas */
+}
+.statement-text { position: relative; z-index: 1; } /* text above the dots */
+
 /* ============ MAZEBOT / ALGORITHM STEPS ============ */
 .algo-steps { counter-reset: algo; max-width: 46rem; }
 .algo-steps li {

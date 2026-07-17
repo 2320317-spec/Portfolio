@@ -6,5 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initProjectPills();
   initLongShadow();
   initWatermark();
+  initDotGrid();
   initCurtain();
 });

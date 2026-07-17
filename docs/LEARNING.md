@@ -157,3 +157,9 @@ Concepts I used and can explain. One line each; details in the linked code.
 ## Task 11 — MazeBot page + navigation loop
 - **CSS counters:** `counter-reset` on the list, `counter-increment` per item, `content: counter(algo, decimal-leading-zero)` in `::before` — the browser numbers the steps itself. Insert a step, everything renumbers; nothing hardcoded.
 - **Closing the loop:** Booking → sentryCORE → MazeBot → Booking. A visitor can circle projects forever without hitting a dead end; every page also offers ← Back to the grid. Dead ends are where visitors leave.
+
+## Dot grid (statement background)
+- **Canvas vs DOM:** ~1,100 dots as elements would mean ~1,100 style recalcs per frame; one `<canvas>` repaints them all in a single pass. Rule of thumb: DOM for dozens, canvas for hundreds+.
+- **Fake 3D from 2D:** each dot orbits on a circle that's randomly squashed (inclination) then rotated (plane tilt) — an angled ellipse reads as a tilted 3D orbit. No 3D math needed.
+- **Excitement gradient:** per-dot 0–1 eased from cursor distance — near dots orbit brightly, mid dots wobble, far dots never move, leavers glide home. One number drives position, brightness, and size.
+- **Same discipline as everything else:** devicePixelRatio scaling for crisp dots, sleep-when-idle rAF, hover-only, reduced-motion skip, rebuild on resize.
