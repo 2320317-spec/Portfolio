@@ -174,3 +174,10 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Zero flow impact:** `height: 2rem; margin-bottom: -2rem` — the tab occupies no net space, so sections sit exactly where they did before.
 - **Navigation for free:** each tab is just `<a href="#section">`; the curtain's same-page-anchor guard already ignores them, and CSS smooth scroll glides the jump.
 - **Mobile discipline:** four floating pills over a phone screen is clutter — `display: none` under 720px. Removing a feature on small screens is also design.
+
+## Task 14 — Lenis smooth scroll (the first and only library)
+- **What a library is:** someone else's tested code via one `<script>` tag — here `Lenis` becomes a global, like our own functions.
+- **How Lenis works:** it intercepts wheel input and eases the real scroll position toward it every frame (`lenis.raf` inside a `requestAnimationFrame` loop). Native scroll still happens — so sticky pins, scroll events, the scrub, and the watermark all keep working untouched.
+- **Why added LAST:** every scroll system was built and understood on raw scrolling first; the library polishes, it doesn't carry. And the Task 6 landmine paid off: CSS `scroll-behavior: smooth` was removed on schedule — two smoothing systems fight over one scrollbar.
+- **Anchor jumps re-wired:** with CSS smooth gone, bookmark-tab clicks glide via `lenis.scrollTo(target)` instead.
+- **The trade-off:** first external dependency (CDN). Convenience vs control — taken knowingly, once, at the end.

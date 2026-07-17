@@ -15,7 +15,8 @@
 
 /* ============ RESET ============ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+/* No scroll-behavior: smooth here — Lenis owns the scroll now, and the
+   two smoothing systems fight over the scrollbar (plan note, Task 6). */
 body {
   font-family: var(--font-body);
   background: var(--cream);
