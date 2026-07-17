@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>sentryCORE — Myke Lhowelle Marundan</title>
+  <meta name="description" content="Case study: sentryCORE — AI smart lock with Arduino, camera, and a local LLM.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600&family=Archivo+Black&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <script>
+    /* Runs before first paint: if we arrived via a curtain exit, paint
+       violet immediately so the page never flashes before JS covers it. */
+    if (sessionStorage.getItem('curtain') === '1')
+      document.documentElement.classList.add('curtain-in');
+  </script>
+</head>
+<body>
+<main>
+  <section class="cs-header grid-bg">
+    <p class="label"><a class="link-sweep" href="../index.html#projects">← Back</a> &nbsp;·&nbsp; Selected Projects · 02/03</p>
+    <h1 class="cs-title" data-cascade>
+      <span class="cascade-line">sentry</span>
+      <span class="cascade-line" style="--base:300ms">CORE</span>
+    </h1>
+    <div class="cs-meta">
+      <span>2026</span><span>IoT × AI</span><span>Role: Developer</span>
+    </div>
+    <ul class="chips" aria-label="Tech stack">
+      <li>Arduino</li><li>JavaScript</li><li>LM Studio</li><li>Local LLM</li>
+    </ul>
+    <div class="cs-actions">
+      <a class="cs-btn" href="https://github.com/2320317-spec" target="_blank" rel="noopener">GitHub repo ↗</a>
+    </div>
+  </section>
+
+  <section class="cs-hero" data-reveal>
+    <div class="cs-img-placeholder">Project photo — added in Task 12</div>
+  </section>
+
+  <section class="cs-star grid-bg">
+    <article class="star-block" data-reveal>
+      <span class="star-num">01</span>
+      <div>
+        <p class="label">Situation</p>
+        <h2 class="star-head">The context &amp; the problem</h2>
+        <p class="star-body">[PLACEHOLDER — Myke's STAR content, Task 12]</p>
+      </div>
+    </article>
+
+    <article class="star-block" data-reveal>
+      <span class="star-num">02</span>
+      <div>
+        <p class="label">Task</p>
+        <h2 class="star-head">My role &amp; responsibility</h2>
+        <p class="star-body">[PLACEHOLDER — Task 12]</p>
+      </div>
+    </article>
+
+    <article class="star-block" data-reveal>
+      <span class="star-num">03</span>
+      <div>
+        <p class="label">Action</p>
+        <h2 class="star-head">How I built it</h2>
+        <p class="star-body">[PLACEHOLDER — Task 12]</p>
+
+        <h3 class="cs-sub">Hardware used</h3>
+        <ul class="hw-list" aria-label="Hardware components">
+          <li>Arduino</li>
+          <li>Servo motor</li>
+          <li>4×4 Keypad</li>
+          <li>16×2 LCD</li>
+          <li>Camera module</li>
+        </ul>
+
+        <h3 class="cs-sub">System architecture</h3>
+        <div class="arch" role="img" aria-label="System flow: keypad and camera feed the Arduino, which talks to the web interface, which queries a local LLM in LM Studio, which decides whether the servo unlocks.">
+          <span class="arch-node">Keypad + Camera</span>
+          <span class="arch-arrow" aria-hidden="true">→</span>
+          <span class="arch-node">Arduino</span>
+          <span class="arch-arrow" aria-hidden="true">→</span>
+          <span class="arch-node">Web interface</span>
+          <span class="arch-arrow" aria-hidden="true">→</span>
+          <span class="arch-node">Local LLM (LM Studio)</span>
+          <span class="arch-arrow" aria-hidden="true">→</span>
+          <span class="arch-node arch-node-accent">Servo unlock</span>
+        </div>
+
+        <pre class="code-block"><code>// PLACEHOLDER — a real snippet from the project (Task 12)</code></pre>
+      </div>
+    </article>
+
+    <article class="star-block" data-reveal>
+      <span class="star-num">04</span>
+      <div>
+        <p class="label">Result</p>
+        <h2 class="star-head">What it achieved</h2>
+        <p class="star-body">[PLACEHOLDER — Task 12]</p>
+        <div class="star-stats">
+          <div><span class="stat-n">—</span><span class="stat-l">stat 1 (Task 12)</span></div>
+          <div><span class="stat-n">—</span><span class="stat-l">stat 2 (Task 12)</span></div>
+        </div>
+        <div class="cs-img-placeholder" style="min-height:180px">Demo video / GIF — added in Task 12</div>
+      </div>
+    </article>
+  </section>
+
+  <a class="cs-next" href="mazebot.html">
+    <span class="label" style="color:var(--lavender)">Next project</span>
+    <span class="cs-next-name">MazeBot →</span>
+  </a>
+</main>
+
+<script src="../js/animations.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

@@ -148,3 +148,8 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Fix:** a 3-line inline script in `<head>` (runs before first paint) stamps `curtain-in` on `<html>`; CSS paints a solid violet shield from frame one. `initCurtain()` then swaps shield → panels (same color = invisible handoff).
 - **Guard:** the shield must come down on EVERY path — including reduced-motion and stale flags — or users stare at violet forever.
 - **Concept:** this is FOUC (flash of unstyled content) fighting; the inline-head-script trick is the same one dark-mode toggles use.
+
+## Task 10 — sentryCORE page
+- **Template reuse checklist:** copy the page, then change title, meta description, position marker, cascade lines, meta row, chips, actions, custom blocks, next-link. Everything else is shared components.
+- **Diagrams from divs, not images:** the architecture flow is styled `<span>`s in a flex row — crisp at any zoom, editable in seconds, themeable by tokens, and it wraps on phones (verified: 3 rows at mobile width) instead of shrinking to unreadable.
+- **`role="img"` + `aria-label`:** screen readers get one clean sentence describing the flow instead of five floating words and arrows.
