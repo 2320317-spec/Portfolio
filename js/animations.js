@@ -318,7 +318,13 @@ function initProjectPills() {
    it starts covered and lets the panels fall away. Direct visits and
    reduced-motion users never see any of it. */
 function initCurtain() {
-  if (REDUCE_MOTION) return;
+  // Did the head script arm the pre-paint shield? Consume the flag and
+  // make sure the shield always comes down, even on the early returns —
+  // otherwise reduced-motion users would stare at violet forever.
+  const arrived = sessionStorage.getItem('curtain') === '1';
+  if (arrived) sessionStorage.removeItem('curtain');
+  const unveil = () => document.documentElement.classList.remove('curtain-in');
+  if (REDUCE_MOTION) { unveil(); return; }
 
   // Build the overlay here so no page needs extra HTML.
   const curtain = document.createElement('div');
@@ -339,14 +345,17 @@ function initCurtain() {
     curtain.classList.remove('no-anim');
   }
 
-  // ENTRY — arrived via a curtain exit: start covered, fall away.
-  if (sessionStorage.getItem('curtain') === '1') {
-    sessionStorage.removeItem('curtain');
+  // ENTRY — arrived via a curtain exit: panels take over from the
+  // shield (same violet, so the swap is invisible), then fall away.
+  if (arrived) {
     setInstant('cover');
+    unveil();
     requestAnimationFrame(() => requestAnimationFrame(() => {
       curtain.classList.replace('cover', 'leave');
     }));
     last.addEventListener('transitionend', () => setInstant(), { once: true });
+  } else {
+    unveil(); // stale shield (e.g. flag consumed by an earlier load)
   }
 
   // EXIT — any same-site page link gets the curtain.

@@ -468,6 +468,17 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   transition-delay: calc(150ms + var(--i) * 80ms);
 }
 .curtain.no-anim span { transition: none; }           /* instant repositions */
+/* Pre-paint shield: stamped on <html> by an inline head script when the
+   page is reached via a curtain exit. Paints solid violet from the very
+   first frame — no white flash while scripts load. initCurtain() swaps
+   it for the real panels (same color = invisible handoff). */
+html.curtain-in::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--violet);
+}
 @media (prefers-reduced-motion: reduce) { .curtain { display: none; } }
 
 /* ============ ACCESSIBILITY ============ */

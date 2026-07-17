@@ -141,3 +141,10 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Inject with JS, not HTML:** the overlay is built by `initCurtain()`, so every page (present and future) gets it with zero markup changes.
 - **`cover` → `leave`, not cover → uncover:** panels fall in from the top, then continue past the bottom — the curtain passes through, like the reference.
 - **Guards matter:** external links, downloads, `target="_blank"`, same-page anchors all skip the curtain; reduced-motion users skip it entirely; bfcache restores (`pageshow`) reset it.
+
+## Curtain fix — the white flash (FOUC)
+- **Symptom:** a white blink between the curtain covering and the new page's curtain appearing.
+- **Cause:** the new page PAINTS before its JS runs — scripts at the end of body are too late to cover the first frame.
+- **Fix:** a 3-line inline script in `<head>` (runs before first paint) stamps `curtain-in` on `<html>`; CSS paints a solid violet shield from frame one. `initCurtain()` then swaps shield → panels (same color = invisible handoff).
+- **Guard:** the shield must come down on EVERY path — including reduced-motion and stale flags — or users stare at violet forever.
+- **Concept:** this is FOUC (flash of unstyled content) fighting; the inline-head-script trick is the same one dark-mode toggles use.
