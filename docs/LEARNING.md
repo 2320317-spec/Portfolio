@@ -199,3 +199,10 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Root cause:** sticky elements cannot outlive their parent. The tabs' parent was `<main>`, which ENDED where the footer began — so the tabs slid away with main's bottom edge exactly as the footer took the screen.
 - **Fix:** moved the footer inside `<main>` so the tabs' territory spans the whole page. Verified: all four tabs pinned at top 0 while the footer covers.
 - **Lesson:** every sticky element has a territory (its parent's box). When something sticky vanishes, ask "whose child is it, and where does that parent end?"
+
+## Bug #7 — Tab clicks didn't scroll (offsetTop inside a sticky sheet)
+- **Symptom:** clicking a bookmark tab did nothing — the page stayed put.
+- **Root cause:** the handler used `lenis.scrollTo(targetElement)`, and Lenis reads the element's `offsetTop`. But each section sits inside a `position: sticky` `.sheet`, which is its `offsetParent` — so `offsetTop` was ~2px, not its real document position. Lenis scrolled to ~2px = the top.
+- **Two traps in one:** `offsetTop` is measured relative to the nearest positioned ancestor (the sticky sheet), AND for a currently-stuck sticky element it reports the docked position, not the flow position. Neither is the document coordinate we wanted.
+- **Fix:** `initSheets` stores each container's true flow-top by summing heights (`acc += offsetHeight` — immune to sticky), and the handler passes that NUMBER to `lenis.scrollTo(y)`. A number is unambiguous; an element isn't.
+- **Verified around the frozen preview:** the pane doesn't tick rAF (Bug #2), so animated scroll can't be observed here. Confirmed instead that the handler computes the right target (774/1494/2214/3399) and that `scrollTo(y, {immediate:true})` reaches each — proving target + reachability; the animation itself runs wherever rAF ticks.

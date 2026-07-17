@@ -397,13 +397,23 @@ function initDotGrid() {
    reachable. Giving those sheets top: (viewport - height), a negative
    number, makes them dock when their bottom lands instead. */
 function initSheets() {
-  const sheets = document.querySelectorAll('.sheet');
-  if (!sheets.length) return;
+  // Every stacking container in document order (sheets + the footer pin).
+  const containers = document.querySelectorAll('.sheet, .footer-pin');
+  if (!containers.length) return;
   function measure() {
     const vh = window.innerHeight;
-    sheets.forEach(s => {
-      const overflow = s.offsetHeight - vh;
-      s.style.setProperty('--sheet-top', overflow > 0 ? -overflow + 'px' : '0px');
+    // Flow top = running sum of heights. offsetHeight is immune to sticky
+    // (unlike offsetTop, which reports a STUCK element's docked position),
+    // so this stays correct no matter what's currently pinned. Stored for
+    // the bookmark tabs to scroll to — they can't trust offsetTop.
+    let acc = 0;
+    containers.forEach(c => {
+      c.dataset.flowTop = acc;
+      if (c.classList.contains('sheet')) {
+        const overflow = c.offsetHeight - vh;
+        c.style.setProperty('--sheet-top', overflow > 0 ? -overflow + 'px' : '0px');
+      }
+      acc += c.offsetHeight;
     });
   }
   measure();

@@ -29,7 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const target = document.querySelector(a.getAttribute('href'));
       if (!target) return;
       e.preventDefault();
-      lenis.scrollTo(target);
+      // Scroll to the target's SHEET flow-top (stashed by initSheets), not
+      // the element: inside a sticky sheet, element.offsetTop is ~0, so
+      // lenis.scrollTo(element) barely moves. A number is unambiguous.
+      const container = target.closest('.sheet, .footer-pin');
+      const y = container ? parseFloat(container.dataset.flowTop) : 0;
+      lenis.scrollTo(y);
     });
   }
 });
