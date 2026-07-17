@@ -439,6 +439,30 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   .star-num { font-size: 2rem; }
 }
 
+/* ============ CURTAIN PAGE TRANSITION ============ */
+/* Five fixed panels above everything. Exit: drop from the top (cover).
+   Entry: continue falling past the bottom (leave) — the curtain passes
+   through the screen rather than bouncing back. JS injects the element,
+   so no page needs extra HTML. */
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  pointer-events: none;
+}
+.curtain span {
+  flex: 1;
+  background: var(--violet);
+  transform: translateY(-101%);          /* parked above the screen */
+  transition: transform .45s cubic-bezier(.65, 0, .35, 1);
+  transition-delay: calc(var(--i) * 70ms); /* left-to-right ripple */
+}
+.curtain.cover span { transform: translateY(0); }     /* covering */
+.curtain.leave span { transform: translateY(101%); }  /* fell past */
+.curtain.no-anim span { transition: none; }           /* instant repositions */
+@media (prefers-reduced-motion: reduce) { .curtain { display: none; } }
+
 /* ============ ACCESSIBILITY ============ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

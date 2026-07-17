@@ -134,3 +134,10 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **One stylesheet, many pages:** every page links the same style.css, so a token change (`--violet`) updates the whole site at once.
 - **Animations came free:** the new page has zero new JS. `data-cascade` and `data-reveal` just work because each init function finds its own elements and no-ops when absent.
 - **Component classes (`.cs-*`) beat per-page styles:** Tasks 10–11 copy this skeleton and inherit the look — a mini design system.
+
+## Curtain page transition
+- **You can't animate across page loads** — a navigation destroys the page. Trick: animate BEFORE leaving (intercept click, `preventDefault`, navigate on `transitionend`) and AFTER arriving (start covered, fall away).
+- **The sessionStorage handshake:** the leaving page sets a flag; the next page reads + deletes it. Direct visitors never see a curtain — only curtain exits get curtain entries.
+- **Inject with JS, not HTML:** the overlay is built by `initCurtain()`, so every page (present and future) gets it with zero markup changes.
+- **`cover` → `leave`, not cover → uncover:** panels fall in from the top, then continue past the bottom — the curtain passes through, like the reference.
+- **Guards matter:** external links, downloads, `target="_blank"`, same-page anchors all skip the curtain; reduced-motion users skip it entirely; bfcache restores (`pageshow`) reset it.

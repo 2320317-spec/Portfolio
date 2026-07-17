@@ -311,3 +311,57 @@ function initProjectPills() {
     });
   });
 }
+
+/* ---- Curtain page transition ---- */
+/* Exit: intercept internal link clicks, drop the panels, THEN navigate.
+   A sessionStorage flag tells the next page it arrived via curtain, so
+   it starts covered and lets the panels fall away. Direct visits and
+   reduced-motion users never see any of it. */
+function initCurtain() {
+  if (REDUCE_MOTION) return;
+
+  // Build the overlay here so no page needs extra HTML.
+  const curtain = document.createElement('div');
+  curtain.className = 'curtain';
+  curtain.setAttribute('aria-hidden', 'true');
+  for (let i = 0; i < 5; i++) {
+    const s = document.createElement('span');
+    s.style.setProperty('--i', i);
+    curtain.appendChild(s);
+  }
+  document.body.appendChild(curtain);
+  const last = curtain.lastElementChild; // finishes last (largest delay)
+
+  // Jump the panels to a state with transitions off (for setup/resets).
+  function setInstant(state) {
+    curtain.className = 'curtain no-anim' + (state ? ' ' + state : '');
+    curtain.offsetHeight; // force the browser to apply the jump now
+    curtain.classList.remove('no-anim');
+  }
+
+  // ENTRY — arrived via a curtain exit: start covered, fall away.
+  if (sessionStorage.getItem('curtain') === '1') {
+    sessionStorage.removeItem('curtain');
+    setInstant('cover');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      curtain.classList.replace('cover', 'leave');
+    }));
+    last.addEventListener('transitionend', () => setInstant(), { once: true });
+  }
+
+  // EXIT — any same-site page link gets the curtain.
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a');
+    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin) return;                  // external
+    if (url.pathname === location.pathname && url.hash) return;  // same-page anchor
+    e.preventDefault();
+    sessionStorage.setItem('curtain', '1');
+    curtain.classList.add('cover');
+    last.addEventListener('transitionend', () => { location.href = a.href; }, { once: true });
+  });
+
+  // Back/forward restores the page from cache mid-cover: clear it.
+  window.addEventListener('pageshow', (e) => { if (e.persisted) setInstant(); });
+}
