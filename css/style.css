@@ -481,6 +481,24 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
 .arch-node-accent { background: var(--violet); border-color: var(--violet); color: var(--cream); }
 .arch-arrow { font-weight: 700; color: #8a8072; }
 
+/* ============ MAZEBOT / ALGORITHM STEPS ============ */
+.algo-steps { counter-reset: algo; max-width: 46rem; }
+.algo-steps li {
+  counter-increment: algo;
+  position: relative;
+  padding: .7rem 0 .7rem 3rem;
+  border-bottom: 1px solid #d8d0c2;
+  color: #4a4438;
+  list-style: none;
+}
+.algo-steps li::before {
+  content: counter(algo, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  font-family: var(--font-display);
+  color: var(--violet);
+}
+
 /* ============ CURTAIN PAGE TRANSITION ============ */
 /* Five fixed panels above everything. Exit: drop from the top (cover).
    Entry: continue falling past the bottom (leave) — the curtain passes

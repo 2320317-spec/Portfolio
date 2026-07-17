@@ -153,3 +153,7 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Template reuse checklist:** copy the page, then change title, meta description, position marker, cascade lines, meta row, chips, actions, custom blocks, next-link. Everything else is shared components.
 - **Diagrams from divs, not images:** the architecture flow is styled `<span>`s in a flex row — crisp at any zoom, editable in seconds, themeable by tokens, and it wraps on phones (verified: 3 rows at mobile width) instead of shrinking to unreadable.
 - **`role="img"` + `aria-label`:** screen readers get one clean sentence describing the flow instead of five floating words and arrows.
+
+## Task 11 — MazeBot page + navigation loop
+- **CSS counters:** `counter-reset` on the list, `counter-increment` per item, `content: counter(algo, decimal-leading-zero)` in `::before` — the browser numbers the steps itself. Insert a step, everything renumbers; nothing hardcoded.
+- **Closing the loop:** Booking → sentryCORE → MazeBot → Booking. A visitor can circle projects forever without hitting a dead end; every page also offers ← Back to the grid. Dead ends are where visitors leave.
