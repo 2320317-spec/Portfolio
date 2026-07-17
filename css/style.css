@@ -481,6 +481,39 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
 .arch-node-accent { background: var(--violet); border-color: var(--violet); color: var(--cream); }
 .arch-arrow { font-weight: 700; color: #8a8072; }
 
+/* ============ BOOKMARK TABS (sticky section nav) ============ */
+/* Each tab is a sticky child of <main>, so it rides with its section,
+   pins near the top at its own offset (--ti = stack index), and STAYS
+   pinned until main ends — tabs accumulate like notebook bookmarks.
+   Zero flow impact: the negative margin cancels the tab's own height,
+   so sections sit exactly where they did before. */
+.tab {
+  position: sticky;
+  top: calc(.9rem + var(--ti, 0) * 2.4rem);
+  z-index: 50;
+  display: block;
+  width: max-content;
+  height: 2rem;
+  margin-left: auto;
+  margin-right: var(--pad-x);
+  margin-bottom: -2rem;
+  background: var(--violet);
+  color: var(--cream);
+  padding: .35rem .95rem;
+  border-radius: 999px;
+  font-size: .65rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  box-shadow: 0 2px 12px rgba(27, 21, 48, .25);
+  transition: transform .25s cubic-bezier(.2, .7, .2, 1), background .25s ease;
+}
+.tab:hover { transform: scale(1.08); background: var(--violet-light); }
+.tab-light { background: var(--cream); color: var(--violet); }
+.tab-light:hover { background: #fff; }
+/* Phones: four floating pills over content is clutter, not navigation. */
+@media (max-width: 720px) { .tab { display: none; } }
+
 /* ============ SECTION WEIGHT & SEAMS ============ */
 /* Dark bands float as rounded cards instead of slamming edge-to-edge —
    the cream "holds" them, softening every dark/cream boundary at once. */
