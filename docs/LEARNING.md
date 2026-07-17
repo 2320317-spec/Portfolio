@@ -187,3 +187,9 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Tall sheets dock by their bottom:** `top: 0` would pin a taller-than-viewport sheet before its lower content was reachable. `initSheets()` gives those a negative top = (viewport − height), so they pin when their bottom lands. Measured per sheet, recomputed on resize.
 - **Opaque backgrounds sell the stack** — the sheet below must vanish completely; a soft top shadow makes the arriving sheet read as paper over paper.
 - **Stacking changed a tuned system:** once the Focus sheet docks, its text freezes at 50% viewport — the scrub could never finish under the old mapping. Retuned to complete during the slide-in (start .78 → done .52). Every layout change re-tests every scroll-driven system.
+
+## Bookmark tabs v2 — notebook style
+- **Shape tells the story:** `border-radius: 0 0 10px 10px` + `top: 0` — flat where it "attaches" to the viewport edge, rounded where it hangs. The silhouette alone reads as a physical bookmark.
+- **Side-by-side slots:** horizontal offset per tab (`margin-right: pad + index × 6.6rem`) instead of vertical stacking — like tabs along a notebook's edge.
+- **Palette variety without breaking palette:** four shades already in the tokens (violet, ink, violet-light, lavender) give notebook-color variety while staying royal.
+- **Micro-interaction matches the metaphor:** hover tugs the bookmark down 4px instead of scaling — the motion a real tab would make.

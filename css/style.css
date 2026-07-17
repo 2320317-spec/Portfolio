@@ -508,28 +508,31 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
    so sections sit exactly where they did before. */
 .tab {
   position: sticky;
-  top: calc(.9rem + var(--ti, 0) * 2.4rem);
+  top: 0; /* flat edge flush with the viewport top = "attached" */
   z-index: 50;
   display: block;
   width: max-content;
-  height: 2rem;
+  height: 2.2rem;
   margin-left: auto;
-  margin-right: var(--pad-x);
-  margin-bottom: -2rem;
+  /* side-by-side slots from the right edge, one per stack index */
+  margin-right: calc(var(--pad-x) + var(--ti, 0) * 6.6rem);
+  margin-bottom: -2.2rem;
   background: var(--violet);
   color: var(--cream);
-  padding: .35rem .95rem;
-  border-radius: 999px;
+  padding: .5rem .95rem .35rem;
+  border-radius: 0 0 10px 10px; /* notebook tab: flat top, rounded bottom */
   font-size: .65rem;
   font-weight: 600;
   letter-spacing: .12em;
   text-transform: uppercase;
-  box-shadow: 0 2px 12px rgba(27, 21, 48, .25);
-  transition: transform .25s cubic-bezier(.2, .7, .2, 1), background .25s ease;
+  box-shadow: 0 4px 14px rgba(27, 21, 48, .22);
+  transition: transform .25s cubic-bezier(.2, .7, .2, 1);
 }
-.tab:hover { transform: scale(1.08); background: var(--violet-light); }
-.tab-light { background: var(--cream); color: var(--violet); }
-.tab-light:hover { background: #fff; }
+.tab:hover { transform: translateY(4px); } /* tug the bookmark down */
+/* one shade per tab — variety like a real notebook, all in the palette */
+.tab-t2 { background: var(--ink); }
+.tab-t3 { background: var(--violet-light); }
+.tab-t4 { background: var(--lavender); color: var(--violet); }
 /* Phones: four floating pills over content is clutter, not navigation. */
 @media (max-width: 720px) { .tab { display: none; } }
 
