@@ -481,6 +481,28 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
 .arch-node-accent { background: var(--violet); border-color: var(--violet); color: var(--cream); }
 .arch-arrow { font-weight: 700; color: #8a8072; }
 
+/* ============ SECTION WEIGHT & SEAMS ============ */
+/* Dark bands float as rounded cards instead of slamming edge-to-edge —
+   the cream "holds" them, softening every dark/cream boundary at once. */
+.marquee, .statement {
+  margin-inline: clamp(8px, 1.5vw, 20px);
+  border-radius: clamp(14px, 2vw, 26px);
+  overflow: hidden;
+}
+/* A hairline that draws itself left->right when it scrolls into view —
+   the link-underline sweep, promoted to a section divider. Reuses the
+   data-reveal observer; overrides its fade/translate with a scaleX. */
+.seam[data-reveal] {
+  height: 2px;
+  background: var(--violet);
+  margin: 0 var(--pad-x);
+  opacity: 1;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1s cubic-bezier(.76, 0, .24, 1) var(--d, 0s);
+}
+.seam[data-reveal].is-visible { transform: scaleX(1); }
+
 /* ============ DOT GRID (statement background) ============ */
 .statement { position: relative; }
 .dot-grid {

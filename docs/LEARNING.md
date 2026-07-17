@@ -163,3 +163,8 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Fake 3D from 2D:** each dot orbits on a circle that's randomly squashed (inclination) then rotated (plane tilt) — an angled ellipse reads as a tilted 3D orbit. No 3D math needed.
 - **Excitement gradient:** per-dot 0–1 eased from cursor distance — near dots orbit brightly, mid dots wobble, far dots never move, leavers glide home. One number drives position, brightness, and size.
 - **Same discipline as everything else:** devicePixelRatio scaling for crisp dots, sleep-when-idle rAF, hover-only, reduced-motion skip, rebuild on resize.
+
+## Section weight & seams
+- **Floating cards:** dark bands inset a touch (`margin-inline`) with rounded corners — the cream "holds" them, and every hard dark/cream cut softens at once. Weight from spacing, not decoration.
+- **The seam:** a 2px violet hairline that draws itself left→right on scroll. It's the link-underline sweep promoted to a section divider — reusing an existing motif is how a site keeps one voice.
+- **Free ride on the observer:** seams are just `[data-reveal]` elements with the fade/translate overridden to a `scaleX` — the IntersectionObserver never knew the difference.
