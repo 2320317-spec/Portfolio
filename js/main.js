@@ -26,7 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', (e) => {
       const a = e.target.closest('a[href^="#"]');
       if (!a) return;
-      const target = document.querySelector(a.getAttribute('href'));
+      const href = a.getAttribute('href');
+      // bare "#" (placeholder links): querySelector('#') would THROW
+      if (href.length < 2) { e.preventDefault(); return; }
+      const target = document.querySelector(href);
       if (!target) return;
       e.preventDefault();
       // Scroll to the target's SHEET flow-top (stashed by initSheets), not

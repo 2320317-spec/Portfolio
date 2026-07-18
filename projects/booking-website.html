@@ -26,14 +26,14 @@
       <span class="cascade-line" style="--base:300ms">Website</span>
     </h1>
     <div class="cs-meta">
-      <span>2025</span><span>Full Stack Web</span><span>Role: Developer</span>
+      <span>2025</span><span>Full Stack Web</span><span>Role: Backend Developer</span>
     </div>
     <ul class="chips" aria-label="Tech stack">
-      <li>HTML</li><li>CSS</li><li>JavaScript</li>
-      <!-- PLACEHOLDER: real stack confirmed in Task 12 -->
+      <li>HTML</li><li>CSS</li><li>JavaScript</li><li>PHP</li><li>MySQL</li>
     </ul>
     <div class="cs-actions">
-      <a class="cs-btn cs-btn-solid" href="#" target="_blank" rel="noopener">Live site ↗</a>
+      <!-- Live URL added once the site is hosted -->
+      <a class="cs-btn cs-btn-solid" href="#" aria-disabled="true">Live site — soon</a>
       <a class="cs-btn" href="https://github.com/2320317-spec" target="_blank" rel="noopener">GitHub repo ↗</a>
     </div>
   </section>
@@ -47,8 +47,14 @@
       <span class="star-num">01</span>
       <div>
         <p class="label">Situation</p>
-        <h2 class="star-head">The context &amp; the problem</h2>
-        <p class="star-body">[PLACEHOLDER — Myke's STAR content, Task 12]</p>
+        <h2 class="star-head">A real client, a real problem</h2>
+        <p class="star-body">
+          A school project with a twist: it required a real client. We partnered
+          with the host of a staycation unit who had strong branding but no
+          website of her own — and a recurring double-booking problem that hurt
+          both the host and her guests. Bookings lived in chat threads and
+          calendars that didn't talk to each other.
+        </p>
       </div>
     </article>
 
@@ -56,8 +62,13 @@
       <span class="star-num">02</span>
       <div>
         <p class="label">Task</p>
-        <h2 class="star-head">My role &amp; responsibility</h2>
-        <p class="star-body">[PLACEHOLDER — Task 12]</p>
+        <h2 class="star-head">Backend developer on a student team</h2>
+        <p class="star-body">
+          We built it as a team, and I owned the backend: the MySQL database
+          design and the PHP logic behind it — most importantly, the booking
+          engine itself, where the double-booking problem had to be solved at
+          the data level, not patched over in the interface.
+        </p>
       </div>
     </article>
 
@@ -66,8 +77,20 @@
       <div>
         <p class="label">Action</p>
         <h2 class="star-head">How I built it</h2>
-        <p class="star-body">[PLACEHOLDER — Task 12]</p>
-        <pre class="code-block"><code>// PLACEHOLDER — a real snippet from the project (Task 12)</code></pre>
+        <p class="star-body">
+          The front end is HTML, CSS, and JavaScript; the backend is PHP on a
+          MySQL database. The heart of my work is the availability check: a
+          booking is only accepted if no confirmed reservation overlaps the
+          requested dates — the kind of guarantee that has to live in the
+          database query itself.
+        </p>
+        <pre class="code-block"><code>-- The double-booking guard: two date ranges overlap when
+-- each one starts before the other one ends.
+SELECT COUNT(*) FROM bookings
+WHERE status = 'confirmed'
+  AND check_in  &lt; :requested_check_out
+  AND check_out &gt; :requested_check_in;
+-- 0 rows -> the unit is free, booking proceeds</code></pre>
       </div>
     </article>
 
@@ -76,10 +99,15 @@
       <div>
         <p class="label">Result</p>
         <h2 class="star-head">What it achieved</h2>
-        <p class="star-body">[PLACEHOLDER — Task 12]</p>
+        <p class="star-body">
+          The site is in active development — we're finishing it to be fully
+          functional and error-free before it goes live for real guests. It has
+          also been my proving ground: the project where classroom concepts
+          became a working full-stack system with a client on the other end.
+        </p>
         <div class="star-stats">
-          <div><span class="stat-n">—</span><span class="stat-l">stat 1 (Task 12)</span></div>
-          <div><span class="stat-n">—</span><span class="stat-l">stat 2 (Task 12)</span></div>
+          <div><span class="stat-n">1</span><span class="stat-l">real client served</span></div>
+          <div><span class="stat-n">0</span><span class="stat-l">double bookings, by design</span></div>
         </div>
       </div>
     </article>
