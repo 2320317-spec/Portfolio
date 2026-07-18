@@ -213,3 +213,9 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Fix:** explicit `width: 100%; height: 100%` on the canvas — replaced elements obey explicit dimensions.
 - **Why tests missed it:** at devicePixelRatio 1 the bitmap equals the CSS size, so the bug is invisible. It only appears on scaled displays (most Windows laptops!). Verified fixed at DPR 1.25.
 - **Lesson:** `inset: 0` "fill the parent" only works on non-replaced elements — and test on a display scale other than 100%, because that's what most real machines run.
+
+## Bug #9 — The marquee gap on wide screens
+- **Symptom:** the ticker sometimes showed an empty tail on the right.
+- **Root cause:** the infinite-loop illusion slides the strip left by exactly one span — it only works if EACH span is at least as wide as the screen. One phrase measured ~670px; on a ~1900px monitor the strip ran out before the loop restarted.
+- **Fix:** repeat the phrase 4x per span (~2685px, covers 2560px ultrawides) and scale the duration 18s → 72s so the pace stays identical — 4x the distance needs 4x the time.
+- **Lesson:** the two-copy marquee trick has a hidden precondition (span ≥ viewport). Content changes and screen sizes can silently break an animation that "worked" — state the precondition in a comment where the content lives.

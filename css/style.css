@@ -89,7 +89,9 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
 }
 .marquee-track {
   display: inline-block;
-  animation: marquee-scroll 18s linear infinite;
+  /* 72s, not 18s: the phrase is repeated 4x per span, so one loop covers
+     4x the distance — duration scales with it to keep the same pace. */
+  animation: marquee-scroll 72s linear infinite;
 }
 .marquee-track span {
   font-family: var(--font-display);
