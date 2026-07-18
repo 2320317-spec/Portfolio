@@ -206,3 +206,10 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Two traps in one:** `offsetTop` is measured relative to the nearest positioned ancestor (the sticky sheet), AND for a currently-stuck sticky element it reports the docked position, not the flow position. Neither is the document coordinate we wanted.
 - **Fix:** `initSheets` stores each container's true flow-top by summing heights (`acc += offsetHeight` — immune to sticky), and the handler passes that NUMBER to `lenis.scrollTo(y)`. A number is unambiguous; an element isn't.
 - **Verified around the frozen preview:** the pane doesn't tick rAF (Bug #2), so animated scroll can't be observed here. Confirmed instead that the handler computes the right target (774/1494/2214/3399) and that `scrollTo(y, {immediate:true})` reaches each — proving target + reachability; the animation itself runs wherever rAF ticks.
+
+## Bug #8 — Dot bloom offset from the cursor (replaced elements vs inset)
+- **Symptom:** mouse on the left, dots blooming to the right of it.
+- **Root cause:** `position: absolute; inset: 0` does NOT stretch a `<canvas>`. Replaced elements (canvas, img, video) keep their intrinsic size — the bitmap — and the spec says an over-constrained absolutely-positioned replaced element ignores `right`/`bottom`. The bitmap is width x devicePixelRatio, so at Windows 125% scaling the canvas rendered 25% larger than its section and every dot painted 25% away from the cursor.
+- **Fix:** explicit `width: 100%; height: 100%` on the canvas — replaced elements obey explicit dimensions.
+- **Why tests missed it:** at devicePixelRatio 1 the bitmap equals the CSS size, so the bug is invisible. It only appears on scaled displays (most Windows laptops!). Verified fixed at DPR 1.25.
+- **Lesson:** `inset: 0` "fill the parent" only works on non-replaced elements — and test on a display scale other than 100%, because that's what most real machines run.
