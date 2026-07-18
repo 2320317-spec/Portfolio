@@ -390,32 +390,101 @@ function initDotGrid() {
   window.addEventListener('resize', build);
 }
 
-/* ---- Count-up counters (the Focus "receipts") ---- */
-/* Numbers tick from 0 to data-count when they enter the screen: an
-   ease-out curve on a rAF loop, so they sprint early and land softly.
-   Reduced motion (or a 0 target) just shows the final number. */
-function initCounters() {
-  const els = document.querySelectorAll('[data-count]');
-  if (!els.length) return;
+/* ---- Dot-matrix cam (Focus section) ---- */
+/* A TouchDesigner-style live effect rebuilt in vanilla JS: the webcam
+   feed is sampled down to a coarse grid and re-rendered as dots whose
+   size follows local brightness — a live halftone in the site palette.
+   Strictly opt-in: the camera starts only from the button click, every
+   frame is processed on the visitor's machine, and nothing is recorded
+   or transmitted anywhere. */
+function initCamBox() {
+  const box = document.querySelector('.cam-box');
+  if (!box) return;
+  const canvas = box.querySelector('.cam-canvas');
+  const btn = box.querySelector('.cam-btn');
+  const note = box.querySelector('.cam-note');
+  const ctx = canvas.getContext('2d');
 
-  function run(el) {
-    const target = parseInt(el.dataset.count, 10) || 0;
-    if (REDUCE_MOTION || target === 0) { el.textContent = target; return; }
-    const t0 = performance.now(), DUR = 1200; // knob: count-up time
-    (function tick(now) {
-      const p = Math.min(1, (now - t0) / DUR);
-      const eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
-      el.textContent = Math.round(target * eased);
-      if (p < 1) requestAnimationFrame(tick);
-    })(t0);
+  const CELL = 9; // knob: dot pitch in px — smaller = finer image
+
+  // Palette from the tokens, so a theme change carries into the feed.
+  const styles = getComputedStyle(document.documentElement);
+  const BRIGHT = styles.getPropertyValue('--cream').trim() || '#F2EEE9';
+  const MID = styles.getPropertyValue('--lavender').trim() || '#A99CC9';
+
+  const video = document.createElement('video');
+  video.muted = true;
+  video.playsInline = true;
+  const sampler = document.createElement('canvas');
+  const sctx = sampler.getContext('2d', { willReadFrequently: true });
+
+  let stream = null, rafId = null;
+
+  function fit() {
+    const r = box.getBoundingClientRect();
+    canvas.width = r.width;   // dots are chunky on purpose: 1x is plenty
+    canvas.height = r.height;
   }
 
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(en => {
-      if (en.isIntersecting) { run(en.target); io.unobserve(en.target); }
-    });
-  }, { threshold: 0.6 });
-  els.forEach(el => io.observe(el));
+  function draw() {
+    const cols = Math.floor(canvas.width / CELL);
+    const rows = Math.floor(canvas.height / CELL);
+    if (cols < 1 || rows < 1 || !video.videoWidth) {
+      rafId = requestAnimationFrame(draw);
+      return;
+    }
+    // One pixel per cell: shrinking the frame IS the sampling.
+    sampler.width = cols; sampler.height = rows;
+    sctx.save();
+    sctx.scale(-1, 1);                          // mirror, like a selfie
+    sctx.drawImage(video, -cols, 0, cols, rows);
+    sctx.restore();
+    const px = sctx.getImageData(0, 0, cols, rows).data;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const i = (y * cols + x) * 4;
+        // perceptual luminance — eyes weigh green far more than blue
+        const lum = (px[i] * .299 + px[i + 1] * .587 + px[i + 2] * .114) / 255;
+        const r = lum * CELL * .48;             // brightness -> dot size
+        if (r < .4) continue;                   // shadows stay empty
+        ctx.fillStyle = lum > .82 ? BRIGHT : MID;
+        ctx.beginPath();
+        ctx.arc(x * CELL + CELL / 2, y * CELL + CELL / 2, r, 0, 6.283);
+        ctx.fill();
+      }
+    }
+    rafId = requestAnimationFrame(draw);
+  }
+
+  async function start() {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640 } });
+      video.srcObject = stream;
+      await video.play();
+      fit();
+      box.classList.add('cam-live');
+      btn.textContent = 'Stop camera';
+      draw();
+    } catch (err) {
+      note.textContent =
+        'Camera unavailable or permission declined — completely fine, this demo is optional.';
+    }
+  }
+
+  function stop() {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = null;
+    if (stream) stream.getTracks().forEach(t => t.stop()); // light goes off
+    stream = null;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    box.classList.remove('cam-live');
+    btn.textContent = 'Enable camera';
+  }
+
+  btn.addEventListener('click', () => (stream ? stop() : start()));
+  window.addEventListener('resize', () => { if (stream) fit(); });
 }
 
 /* ---- Stacking sheets: dock taller-than-viewport sheets by their bottom ---- */

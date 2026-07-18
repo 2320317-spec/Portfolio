@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initLongShadow();
   initWatermark();
   initDotGrid();
-  initCounters();
+  initCamBox();
   initSheets();
   initCurtain();
 

@@ -231,3 +231,10 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Root cause:** when stacking was dialed back, the other sheets became `position: static` — but the pinned hero stayed `sticky` (positioned), and **positioned elements paint above static siblings regardless of DOM order**. The hero drew on top of the cream backgrounds sliding over it.
 - **Fix:** `position: relative` on every sheet — all siblings positioned again, so "later in the DOM paints on top" rules once more.
 - **Lesson:** CSS painting order has tiers: static backgrounds → static text → positioned elements. Mixing positioned and static siblings that overlap is asking for see-through bugs; keep overlapping siblings in the same tier.
+
+## Dot-matrix cam (replacing the receipts — Myke's call)
+- **TouchDesigner in the browser?** Not literally — TD is a desktop runtime. But its webcam tricks are "sample the feed, re-render as graphics," and that's exactly canvas + `getUserMedia`. The effect class ports even when the tool doesn't.
+- **The halftone recipe:** shrink the video frame to ~50×35 pixels (the shrink IS the sampling — one pixel per cell), read luminance per cell (`.299R + .587G + .114B`, eyes weigh green most), draw a dot sized by brightness. Shadows get no dot; highlights go cream, midtones lavender.
+- **Camera ethics are UX:** starts only from a click, the note says everything stays on-device, Stop actually stops the tracks (the camera light goes off), and a denied permission changes the copy instead of breaking. The failure path got tested before the success path.
+- **Selfie mirror:** the sampler flips horizontally (`scale(-1,1)`) — un-mirrored video feels wrong when you move.
+- **Design iteration is allowed to delete:** the count-up receipts shipped, looked flat in context, and got replaced the same day. Kill your darlings; git remembers them.

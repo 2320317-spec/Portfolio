@@ -170,39 +170,62 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   background: var(--ink);
   min-height: 90vh;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+  flex-wrap: wrap; /* phone: cam box drops below the text */
 }
+.statement-text { flex: 1 1 30rem; }
 
-/* ---- The receipts (self-audit under the statement) ---- */
-.focus-proof { position: relative; z-index: 1; margin-top: 3.5rem; }
-.focus-kicker {
-  font-size: .72rem;
+/* ---- Dot-matrix cam box ---- */
+.cam-box {
+  position: relative;
+  z-index: 1;             /* above the dot-grid canvas */
+  flex: 1 1 20rem;
+  max-width: 30rem;
+  aspect-ratio: 4 / 3;
+  border: 1px solid #35342f;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #121210;
+}
+.cam-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;   /* explicit — inset alone doesn't stretch a canvas (Bug #8) */
+  height: 100%;
+}
+.cam-ui {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+  align-items: flex-start;
+  padding: 1rem 1.2rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, .6));
+}
+.cam-title {
+  font-size: .68rem;
   font-weight: 600;
   letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--lavender);
 }
-.focus-stats {
-  display: flex;
-  gap: clamp(2rem, 6vw, 5rem);
-  flex-wrap: wrap;
-  margin-top: 1.3rem;
-}
-.focus-n {
-  display: block;
-  font-family: var(--font-display);
-  font-size: clamp(2.2rem, 5vw, 3.6rem);
-  line-height: 1;
+.cam-note { font-size: .78rem; color: #b5b0a4; max-width: 26rem; }
+.cam-live .cam-note { display: none; } /* feed running: get out of the way */
+.cam-btn {
+  border: 0;
+  background: var(--violet-light);
   color: var(--cream);
-}
-.focus-l {
-  font-size: .68rem;
-  font-weight: 600;
-  letter-spacing: .12em;
+  border-radius: 999px;
+  padding: .5rem 1.2rem;
+  font: 600 .72rem/1 var(--font-body);
+  letter-spacing: .1em;
   text-transform: uppercase;
-  color: #8a8578;
+  cursor: pointer;
+  transition: transform .25s cubic-bezier(.2, .7, .2, 1), background .25s ease;
 }
+.cam-btn:hover { transform: scale(1.06); background: var(--violet); }
 .statement-text {
   font-family: var(--font-display);
   font-size: clamp(1.8rem, 5vw, 4rem);

@@ -86,14 +86,16 @@
       <p class="statement-text" data-scrub>
         Building web, hardware, and AI projects that actually work
       </p>
-      <!-- The receipts: the claim above, audited by this very page.
-           Numbers count up on arrival (initCounters). -->
-      <div class="focus-proof" data-reveal>
-        <p class="focus-kicker">The claim above, audited by the page you're reading:</p>
-        <div class="focus-stats">
-          <div><span class="focus-n" data-count="14">0</span><span class="focus-l">animations hand-built</span></div>
-          <div><span class="focus-n" data-count="0">0</span><span class="focus-l">frameworks used</span></div>
-          <div><span class="focus-n" data-count="9">0</span><span class="focus-l">bugs hunted &amp; logged</span></div>
+      <!-- Dot-matrix cam: a TouchDesigner-style live effect, rebuilt in
+           vanilla JS. Opt-in only — camera starts from the button. -->
+      <div class="cam-box" data-reveal>
+        <canvas class="cam-canvas" aria-hidden="true"></canvas>
+        <div class="cam-ui">
+          <p class="cam-title">Live — dot-matrix cam</p>
+          <p class="cam-note">The kind of real-time effect I build in TouchDesigner,
+            recreated in the browser. Runs entirely on your device —
+            nothing is recorded or uploaded.</p>
+          <button class="cam-btn" type="button">Enable camera</button>
         </div>
       </div>
     </section>
