@@ -14,7 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Lenis eases the wheel input into a weighted glide; native scroll
   // events still fire, so every scroll-driven system above keeps working.
   if (!REDUCE_MOTION && typeof Lenis !== 'undefined') {
-    const lenis = new Lenis();
+    // Scroll feel — Myke's knobs:
+    //   lerp: how fast the glide catches up. LOWER = floatier/slower
+    //         settle (0.05 dreamy .. 0.1 default .. 0.2 tight)
+    //   wheelMultiplier: distance per wheel tick. LOWER = slower scroll
+    //         (0.6 leisurely .. 1 normal)
+    const lenis = new Lenis({
+      lerp: 0.07,
+      wheelMultiplier: 0.8
+    });
     function raf(time) {
       lenis.raf(time);
       requestAnimationFrame(raf);
