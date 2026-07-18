@@ -83,11 +83,10 @@ function initScrub() {
   // the text and the text sits centred inside it, so driving off the
   // section's top tracked a point ~360px above the thing being animated:
   // the whole sweep finished while the text was still below the fold.
-  // Stacking-sheet tuning: once the Focus sheet DOCKS, its text freezes
-  // at 50% of the viewport and can never rise further — so the sweep
-  // must complete during the slide-in, finishing just before dock.
-  const CENTRE_START = 0.78; // text's middle rising into view -> begin
-  const CENTRE_END = 0.52;   // ...docked at centre -> fully lit
+  // Focus scrolls normally again (only the hero pins now), so the sweep
+  // runs where the eyes are: begins just under centre, done near the top.
+  const CENTRE_START = 0.60; // text's middle just under the centre line -> begin
+  const CENTRE_END = 0.25;   // ...risen toward the top -> fully lit
 
   function onScroll() {
     const rect = el.getBoundingClientRect();
@@ -389,6 +388,34 @@ function initDotGrid() {
   }
   build();
   window.addEventListener('resize', build);
+}
+
+/* ---- Count-up counters (the Focus "receipts") ---- */
+/* Numbers tick from 0 to data-count when they enter the screen: an
+   ease-out curve on a rAF loop, so they sprint early and land softly.
+   Reduced motion (or a 0 target) just shows the final number. */
+function initCounters() {
+  const els = document.querySelectorAll('[data-count]');
+  if (!els.length) return;
+
+  function run(el) {
+    const target = parseInt(el.dataset.count, 10) || 0;
+    if (REDUCE_MOTION || target === 0) { el.textContent = target; return; }
+    const t0 = performance.now(), DUR = 1200; // knob: count-up time
+    (function tick(now) {
+      const p = Math.min(1, (now - t0) / DUR);
+      const eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
+      el.textContent = Math.round(target * eased);
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting) { run(en.target); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.6 });
+  els.forEach(el => io.observe(el));
 }
 
 /* ---- Stacking sheets: dock taller-than-viewport sheets by their bottom ---- */

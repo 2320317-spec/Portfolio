@@ -219,3 +219,9 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Root cause:** the infinite-loop illusion slides the strip left by exactly one span — it only works if EACH span is at least as wide as the screen. One phrase measured ~670px; on a ~1900px monitor the strip ran out before the loop restarted.
 - **Fix:** repeat the phrase 4x per span (~2685px, covers 2560px ultrawides) and scale the duration 18s → 72s so the pace stays identical — 4x the distance needs 4x the time.
 - **Lesson:** the two-copy marquee trick has a hidden precondition (span ≥ viewport). Content changes and screen sizes can silently break an animation that "worked" — state the precondition in a comment where the content lives.
+
+## Design edit — stacking dialed back + the receipts
+- **One wow, then calm:** the full-page card stack was too much of a good thing (Myke's call). Now only the hero pins and About rides over it; everything after scrolls normally. Restraint reads as intent — an effect used once is a statement, used everywhere it's wallpaper.
+- **Reverting a tuning when the layout reverts:** the scrub went back to its pre-stacking mapping (start 0.60, done 0.25) since Focus scrolls freely again. Tunings belong to layouts, not to the site.
+- **The receipts:** the dark section claims "projects that actually work" — so the page audits itself right below: 14 animations hand-built · 0 frameworks · 9 bugs hunted & logged. Claim and evidence in one viewport; the portfolio is its own proof.
+- **Count-up pattern:** IntersectionObserver arms each number once; a rAF loop with ease-out cubic (`1 − (1−p)³`) sprints early and lands softly. Same measure→map thinking, driven by time instead of scroll.
