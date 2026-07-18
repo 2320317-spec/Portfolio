@@ -180,8 +180,8 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
 .cam-box {
   position: relative;
   z-index: 1;             /* above the dot-grid canvas */
-  flex: 1 1 20rem;
-  max-width: 30rem;
+  flex: 1 1 26rem;
+  max-width: 38rem;
   aspect-ratio: 4 / 3;
   border: 1px solid #35342f;
   border-radius: 14px;
