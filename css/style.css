@@ -528,7 +528,14 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
    rides over it. Everything after scrolls normally — one wow, then calm.
    (Myke's call: the full-page stack was too much of a good thing.)
    Sheets keep opaque backgrounds so the pinned hero never peeks through. */
-.sheet { background: var(--cream); }
+.sheet {
+  background: var(--cream);
+  /* relative, not static: the pinned hero is positioned, and positioned
+     elements paint ABOVE static siblings no matter the DOM order — the
+     hero was showing through the sections scrolling over it. Making every
+     sheet positioned restores "later in the DOM paints on top". */
+  position: relative;
+}
 .sheet-hero {
   position: sticky;
   top: var(--sheet-top, 0px);

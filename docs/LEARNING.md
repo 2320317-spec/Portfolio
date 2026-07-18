@@ -225,3 +225,9 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Reverting a tuning when the layout reverts:** the scrub went back to its pre-stacking mapping (start 0.60, done 0.25) since Focus scrolls freely again. Tunings belong to layouts, not to the site.
 - **The receipts:** the dark section claims "projects that actually work" — so the page audits itself right below: 14 animations hand-built · 0 frameworks · 9 bugs hunted & logged. Claim and evidence in one viewport; the portfolio is its own proof.
 - **Count-up pattern:** IntersectionObserver arms each number once; a rAF loop with ease-out cubic (`1 − (1−p)³`) sprints early and lands softly. Same measure→map thinking, driven by time instead of scroll.
+
+## Bug #10 — Hero showing through the sections above it
+- **Symptom:** scrolling past the hero, the About text and the giant name overlapped — two sections painting through each other.
+- **Root cause:** when stacking was dialed back, the other sheets became `position: static` — but the pinned hero stayed `sticky` (positioned), and **positioned elements paint above static siblings regardless of DOM order**. The hero drew on top of the cream backgrounds sliding over it.
+- **Fix:** `position: relative` on every sheet — all siblings positioned again, so "later in the DOM paints on top" rules once more.
+- **Lesson:** CSS painting order has tiers: static backgrounds → static text → positioned elements. Mixing positioned and static siblings that overlap is asking for see-through bugs; keep overlapping siblings in the same tier.
