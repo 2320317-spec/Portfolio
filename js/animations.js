@@ -520,6 +520,26 @@ function initSheets() {
   window.addEventListener('resize', measure);
 }
 
+/* ---- Case-study galleries ---- */
+/* Each .cs-gallery holds its images in plain HTML; this just cycles
+   which one carries .is-active. Adding a photo = adding an <img> line. */
+function initGalleries() {
+  document.querySelectorAll('.cs-gallery').forEach(gal => {
+    const imgs = [...gal.querySelectorAll('.cs-img')];
+    if (imgs.length < 2) { gal.classList.add('gal-single'); return; }
+    const count = gal.querySelector('.gal-count');
+    let i = 0;
+    function show(n) {
+      i = (n + imgs.length) % imgs.length; // wraps both directions
+      imgs.forEach((im, k) => im.classList.toggle('is-active', k === i));
+      if (count) count.textContent = (i + 1) + ' / ' + imgs.length;
+    }
+    gal.querySelector('.gal-prev').addEventListener('click', () => show(i - 1));
+    gal.querySelector('.gal-next').addEventListener('click', () => show(i + 1));
+    show(0);
+  });
+}
+
 /* ---- Curtain page transition ---- */
 /* Exit: intercept internal link clicks, drop the panels, THEN navigate.
    A sessionStorage flag tells the next page it arrived via curtain, so

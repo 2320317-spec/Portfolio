@@ -164,6 +164,15 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   text-transform: uppercase;
   letter-spacing: .08em;
 }
+/* Profile photo — fills the space under the statement; the violet
+   offset slab echoes the footer's long-shadow motif. */
+.about-pfp {
+  width: min(320px, 85%);
+  border-radius: 12px;
+  margin-top: 2.2rem;
+  box-shadow: 14px 14px 0 var(--violet);
+}
+
 /* Education + toolbox lists in About (headings reuse .cs-sub) */
 .about-body .cs-sub { margin-top: 1.8rem; }
 .about-edu li, .about-tools li {
@@ -274,15 +283,18 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   overflow: hidden;
   cursor: pointer;
 }
-/* image sits underneath, invisible until hover */
+/* image sits underneath — faint and blurred at rest, slowly
+   sharpening to full clarity under the cursor */
 .cell-img {
   position: absolute;
   inset: 0;
-  opacity: 0;
-  transition: opacity .3s ease;
+  opacity: .28;
+  filter: blur(9px) grayscale(50%);
+  transition: opacity .5s ease, filter .7s ease;
   background-size: cover;
   background-position: center;
 }
+.project-cell:hover .cell-img { filter: blur(0) grayscale(0); }
 /* real project shots (paths are case-sensitive on GitHub Pages!) */
 .img-booking { background-image: url('../assets/images/Amari_Booking_Website/Amari_Booking_Flow.jpg'); }
 .img-sentry  { background-image: url('../assets/images/SentryCORE/Dashboard_Lock.jpg'); }
@@ -324,7 +336,8 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
 
 /* touch devices: no hover — show a hint of the image, hide pills */
 @media (hover: none) {
-  .cell-img { opacity: .25; }
+  /* touch: no hover to sharpen with, so keep a light readable blur */
+  .cell-img { opacity: .3; filter: blur(3px) grayscale(30%); }
   .view-pill { display: none; }
 }
 @media (max-width: 720px) {
@@ -467,6 +480,59 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   border-radius: 8px;
   border: 1px solid #d8d0c2;
 }
+
+/* ---- Case-study gallery ---- */
+/* All images live in the HTML; CSS shows only .is-active and JS cycles.
+   To add a picture: drop it in assets/images/<project>/ and add one
+   <img class="cs-img"> line inside the .cs-gallery — that's it. */
+.cs-gallery {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid #d8d0c2;
+}
+.cs-gallery .cs-img {
+  display: none;
+  border: 0;
+  border-radius: 0;
+  aspect-ratio: 16 / 9;   /* stable height while photos change */
+  object-fit: contain;    /* letterbox instead of cropping screenshots */
+  background: #121210;
+}
+.cs-gallery .cs-img.is-active { display: block; }
+.gal-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--violet);
+  color: var(--cream);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background .25s ease, transform .25s cubic-bezier(.2, .7, .2, 1);
+}
+.gal-btn:hover { background: var(--violet-light); transform: translateY(-50%) scale(1.1); }
+.gal-prev { left: .8rem; }
+.gal-next { right: .8rem; }
+.gal-count {
+  position: absolute;
+  right: .9rem;
+  bottom: .8rem;
+  z-index: 2;
+  background: rgba(0, 0, 0, .55);
+  color: var(--cream);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  padding: .25rem .7rem;
+  border-radius: 999px;
+}
+/* one image only: hide the controls, behave like a plain photo */
+.gal-single .gal-btn, .gal-single .gal-count { display: none; }
 .cs-img-placeholder {
   border: 1px dashed #b8ae9d;
   border-radius: 8px;

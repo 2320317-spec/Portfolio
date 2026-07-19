@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initWatermark();
   initDotGrid();
   initCamBox();
+  initGalleries();
   initSheets();
   initCurtain();
 
