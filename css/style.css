@@ -1,3 +1,6 @@
+/* To adjust colours, sizes, spacing, or motion: see docs/TUNING.md —
+   every knob is listed there by what you want to change. */
+
 /* ============ DESIGN TOKENS ============ */
 :root {
   --cream: #F2EEE9;
