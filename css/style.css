@@ -164,6 +164,16 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   text-transform: uppercase;
   letter-spacing: .08em;
 }
+/* Education + toolbox lists in About (headings reuse .cs-sub) */
+.about-body .cs-sub { margin-top: 1.8rem; }
+.about-edu li, .about-tools li {
+  font-size: .85rem;
+  color: #4a4438;
+  padding: .3rem 0;
+  border-bottom: 1px solid #e2dccf;
+}
+.about-edu strong, .about-tools strong { color: var(--ink); }
+
 @media (max-width: 720px) {
   .about-grid { grid-template-columns: 1fr; }
 }

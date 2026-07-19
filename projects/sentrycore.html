@@ -26,13 +26,14 @@
       <span class="cascade-line" style="--base:300ms">CORE</span>
     </h1>
     <div class="cs-meta">
-      <span>2026</span><span>IoT × AI</span><span>Role: Developer</span>
+      <span>2026</span><span>IoT × AI</span><span>Role: Solo Developer</span>
     </div>
     <ul class="chips" aria-label="Tech stack">
-      <li>Arduino</li><li>JavaScript</li><li>LM Studio</li><li>Local LLM</li>
+      <li>Python</li><li>Flask</li><li>Arduino</li>
+      <li>DeepSeek</li><li>LM Studio</li><li>OpenCV</li>
     </ul>
     <div class="cs-actions">
-      <a class="cs-btn" href="https://github.com/2320317-spec" target="_blank" rel="noopener">GitHub repo ↗</a>
+      <a class="cs-btn" href="https://github.com/2320317-spec/Control_System_Finals" target="_blank" rel="noopener">GitHub repo ↗</a>
     </div>
   </section>
 
@@ -45,8 +46,13 @@
       <span class="star-num">01</span>
       <div>
         <p class="label">Situation</p>
-        <h2 class="star-head">The context &amp; the problem</h2>
-        <p class="star-body">[PLACEHOLDER — Myke's STAR content, Task 12]</p>
+        <h2 class="star-head">A smart lock that thinks</h2>
+        <p class="star-body">
+          My Control Systems final project. Smart locks exist and AI exists —
+          but I hadn't seen the two working together, so I decided to build it:
+          a lock that doesn't just check a PIN, but watches for threats,
+          reasons about them with a local AI model, and physically responds.
+        </p>
       </div>
     </article>
 
@@ -54,8 +60,13 @@
       <span class="star-num">02</span>
       <div>
         <p class="label">Task</p>
-        <h2 class="star-head">My role &amp; responsibility</h2>
-        <p class="star-body">[PLACEHOLDER — Task 12]</p>
+        <h2 class="star-head">Solo build — every layer mine</h2>
+        <p class="star-body">
+          I built the whole system alone: the Arduino firmware, the Python
+          backend, the AI integration, and the web dashboard. That meant
+          owning every interface between layers — serial protocol, API
+          endpoints, and the safety logic that decides when the lock acts.
+        </p>
       </div>
     </article>
 
@@ -63,8 +74,19 @@
       <span class="star-num">03</span>
       <div>
         <p class="label">Action</p>
-        <h2 class="star-head">How I built it</h2>
-        <p class="star-body">[PLACEHOLDER — Task 12]</p>
+        <h2 class="star-head">Three layers and a guardrail</h2>
+        <p class="star-body">
+          The Arduino handles the physical world: keypad entry, brute-force
+          detection at the edge, and the lock mechanism. It streams security
+          logs over USB serial to a Python/Flask backend, where a background
+          listener reacts instantly — OpenCV snaps a webcam photo as evidence,
+          and the log goes to DeepSeek (running locally in LM Studio) for
+          threat analysis. But the AI never acts alone: a two-way guardrail
+          only triggers a lockdown when hardware and AI agree — if the AI
+          misses a real threat, Python overrides it; if the AI hallucinates
+          one, Python blocks it. A live dashboard (HTML/JS) shows lock status,
+          AI summaries, and intruder photos, with a manual override.
+        </p>
 
         <h3 class="cs-sub">Hardware used</h3>
         <ul class="hw-list" aria-label="Hardware components">
@@ -72,23 +94,34 @@
           <li>Servo motor</li>
           <li>4×4 Keypad</li>
           <li>16×2 LCD</li>
-          <li>Camera module</li>
+          <li>Webcam (OpenCV)</li>
         </ul>
 
         <h3 class="cs-sub">System architecture</h3>
-        <div class="arch" role="img" aria-label="System flow: keypad and camera feed the Arduino, which talks to the web interface, which queries a local LLM in LM Studio, which decides whether the servo unlocks.">
-          <span class="arch-node">Keypad + Camera</span>
+        <div class="arch" role="img" aria-label="System flow: the Arduino with keypad detects events and sends logs over serial to a Flask backend; the log goes to a DeepSeek model running in LM Studio; a Python guardrail verifies hardware and AI agree; only then is the lock or lockdown command sent back to the Arduino. A web dashboard mirrors everything live.">
+          <span class="arch-node">Arduino + Keypad</span>
           <span class="arch-arrow" aria-hidden="true">→</span>
-          <span class="arch-node">Arduino</span>
+          <span class="arch-node">Serial log</span>
           <span class="arch-arrow" aria-hidden="true">→</span>
-          <span class="arch-node">Web interface</span>
+          <span class="arch-node">Flask backend</span>
           <span class="arch-arrow" aria-hidden="true">→</span>
-          <span class="arch-node">Local LLM (LM Studio)</span>
+          <span class="arch-node">DeepSeek · LM Studio</span>
           <span class="arch-arrow" aria-hidden="true">→</span>
-          <span class="arch-node arch-node-accent">Servo unlock</span>
+          <span class="arch-node">Python guardrail</span>
+          <span class="arch-arrow" aria-hidden="true">→</span>
+          <span class="arch-node arch-node-accent">Lock / Lockdown</span>
         </div>
 
-        <pre class="code-block"><code>// PLACEHOLDER — a real snippet from the project (Task 12)</code></pre>
+        <pre class="code-block"><code># 2-way verification: hardware AND AI must agree.
+# Prevents false lockdowns (AI hallucination) AND missed
+# real threats (AI failure) — the single most important
+# architectural decision in the system.
+if hardware_demands_lockdown and ai_wants_lockdown:
+    ai_action = "LOCKDOWN"   # both agree
+elif hardware_demands_lockdown and not ai_wants_lockdown:
+    ai_action = "LOCKDOWN"   # Python overrides the AI
+elif not hardware_demands_lockdown and ai_wants_lockdown:
+    ai_action = "NONE"       # Python blocks the hallucination</code></pre>
       </div>
     </article>
 
@@ -96,11 +129,18 @@
       <span class="star-num">04</span>
       <div>
         <p class="label">Result</p>
-        <h2 class="star-head">What it achieved</h2>
-        <p class="star-body">[PLACEHOLDER — Task 12]</p>
+        <h2 class="star-head">Working end-to-end, safely</h2>
+        <p class="star-body">
+          The full loop runs: a brute-force attempt at the keypad ends with a
+          physical lockdown, photo evidence, and an AI-written threat summary
+          on the dashboard — all on a 1.5B-parameter model running locally,
+          no cloud. The model does hallucinate sometimes; the system stays
+          safe anyway, because the guardrail was designed assuming it would.
+          Engineering for an unreliable component is the whole lesson.
+        </p>
         <div class="star-stats">
-          <div><span class="stat-n">—</span><span class="stat-l">stat 1 (Task 12)</span></div>
-          <div><span class="stat-n">—</span><span class="stat-l">stat 2 (Task 12)</span></div>
+          <div><span class="stat-n">1.5B</span><span class="stat-l">params, fully local AI</span></div>
+          <div><span class="stat-n">2×</span><span class="stat-l">verification before lockdown</span></div>
         </div>
         <div class="cs-img-placeholder" style="min-height:180px">Demo video / GIF — added in Task 12</div>
       </div>
