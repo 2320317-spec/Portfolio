@@ -1,6 +1,9 @@
 # Brainstorming companion working files (not part of the site)
 .superpowers/
 
+# Internal review prep — not for the public repo
+docs/REVIEW-BRIEF.html
+
 # OS junk
 Thumbs.db
 .DS_Store
