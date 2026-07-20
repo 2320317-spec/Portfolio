@@ -83,7 +83,7 @@
         <p class="label">Task</p>
         <h2 class="star-head">My part: the backend</h2>
         <p class="star-body">
-          We worked on this as a team, and I took the backend side — designing
+          We worked on this as a team, and I took the backend side, designing
           the MySQL database and writing the PHP behind it. The part I spent
           the most time on was the booking logic, since that's where the
           double-booking issue actually had to be handled.
@@ -104,6 +104,15 @@
           only goes through if no confirmed reservation overlaps the dates being
           requested.
         </p>
+        <div class="star-body" style="margin-top: .8rem;">
+          <strong>Calendar integration:</strong>
+          <ul style="margin: .45rem 0 0 1.2rem; padding: 0;">
+            <li>Flatpickr library (CDN: https://cdn.jsdelivr.net/npm/flatpickr)</li>
+            <li>Branded date picker with custom colors</li>
+            <li>Min date validation (can't book in the past)</li>
+            <li>Checkout date must be after check-in</li>
+          </ul>
+        </div>
         <pre class="code-block"><code>-- The double-booking guard: two date ranges overlap when
 -- each one starts before the other one ends.
 SELECT COUNT(*) FROM bookings
