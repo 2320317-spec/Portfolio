@@ -409,7 +409,7 @@ function initCamBox() {
   const note = box.querySelector('.cam-note');
   const ctx = canvas.getContext('2d');
 
-  const CELL = 8; // knob: dot pitch in px — smaller = finer image
+  const CELL = 7.5; // knob: dot pitch in px — smaller = finer image
 
   // Palette from the tokens, so a theme change carries into the feed.
   const styles = getComputedStyle(document.documentElement);
@@ -526,16 +526,40 @@ function initSheets() {
 function initGalleries() {
   document.querySelectorAll('.cs-gallery').forEach(gal => {
     const imgs = [...gal.querySelectorAll('.cs-img')];
-    if (imgs.length < 2) { gal.classList.add('gal-single'); return; }
+    if (!imgs.length) return;
+    if (imgs.length < 2) {
+      gal.classList.add('gal-single');
+      imgs[0].classList.add('is-active'); // otherwise it stays dimmed
+      return;
+    }
+
+    // Wrap the images in a sliding row. Built here rather than in the
+    // HTML so every case-study page stays a plain list of <img>.
+    const track = document.createElement('div');
+    track.className = 'gal-track';
+    imgs[0].before(track);
+    imgs.forEach(im => track.appendChild(im));
+
     const count = gal.querySelector('.gal-count');
     let i = 0;
+
     function show(n) {
-      i = (n + imgs.length) % imgs.length; // wraps both directions
+      i = (n + imgs.length) % imgs.length;      // wraps both directions
+      track.style.transform = `translateX(${-i * 100}%)`;
       imgs.forEach((im, k) => im.classList.toggle('is-active', k === i));
       if (count) count.textContent = (i + 1) + ' / ' + imgs.length;
     }
+
     gal.querySelector('.gal-prev').addEventListener('click', () => show(i - 1));
     gal.querySelector('.gal-next').addEventListener('click', () => show(i + 1));
+
+    // Arrow keys once the gallery has focus — cheap accessibility win.
+    gal.tabIndex = 0;
+    gal.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); show(i - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); show(i + 1); }
+    });
+
     show(0);
   });
 }

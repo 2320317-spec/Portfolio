@@ -151,7 +151,7 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   /* Sized to fill the wide left column — "LEARNING. BUILDING. IMPROVING."
      is the longest line, so the 3.3rem ceiling is what keeps it on one
      line. Raise it and that line wraps; the composition is three lines. */
-  font-size: clamp(1.5rem, 4vw, 3.3rem);
+  font-size: clamp(1.5rem, 4vw, 5rem);
   line-height: 1.12;
   text-transform: uppercase;
   letter-spacing: -.02em;
@@ -523,23 +523,36 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
 .cs-gallery {
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid #d8d0c2;
   /* Sized to sit comfortably in one screen rather than filling it —
      you can see the photo and the text around it at the same time. */
-  max-width: 56rem;
+  max-width: 62rem;
   margin-inline: auto;
 }
+/* The slides sit in a row and the whole row slides — a display:none
+   swap would cut between photos; this glides. Built by initGalleries()
+   so the HTML stays a plain list of <img>. */
+.gal-track {
+  display: flex;
+  transition: transform .8s cubic-bezier(.65, 0, .35, 1);
+  will-change: transform;
+}
 .cs-gallery .cs-img {
-  display: none;
+  flex: 0 0 100%;         /* one slide per view */
   border: 0;
   border-radius: 0;
   aspect-ratio: 16 / 9;   /* stable height while photos change */
-  max-height: 62svh;      /* never taller than most of the viewport */
+  max-height: 66svh;      /* never taller than most of the viewport */
   object-fit: contain;    /* letterbox instead of cropping screenshots */
   background: #121210;
+  /* off-slides sit back slightly, so the incoming photo settles
+     forward as it arrives instead of just appearing */
+  opacity: .35;
+  transform: scale(.94);
+  transition: opacity .55s ease, transform .8s cubic-bezier(.65, 0, .35, 1);
 }
-.cs-gallery .cs-img.is-active { display: block; }
+.cs-gallery .cs-img.is-active { opacity: 1; transform: scale(1); }
 .gal-btn {
   position: absolute;
   top: 50%;
