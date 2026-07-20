@@ -34,7 +34,7 @@
     <div class="cs-actions">
       <!-- Live URL added once the site is hosted -->
       <a class="cs-btn cs-btn-solid" href="#" aria-disabled="true">Live site — soon</a>
-      <a class="cs-btn" href="https://github.com/2320317-spec" target="_blank" rel="noopener">GitHub repo ↗</a>
+      <a class="cs-btn" href="https://github.com/2320317-spec/Software_Design_Amari_Staycation_Website.git" target="_blank" rel="noopener">GitHub repo ↗</a>
     </div>
   </section>
 
@@ -65,13 +65,14 @@
       <span class="star-num">01</span>
       <div>
         <p class="label">Situation</p>
-        <h2 class="star-head">A real client, a real problem</h2>
+        <h2 class="star-head">Working with a real client</h2>
         <p class="star-body">
-          A school project with a twist: it required a real client. We partnered
-          with the host of a staycation unit who had strong branding but no
-          website of her own — and a recurring double-booking problem that hurt
-          both the host and her guests. Bookings lived in chat threads and
-          calendars that didn't talk to each other.
+          This started as a school project that required us to find an actual
+          client. We ended up working with the host of a staycation unit called
+          Amari. She already had good branding, but no website of her own, and
+          she kept running into double bookings because reservations were
+          scattered across chats and separate calendars. That was the problem
+          we wanted to solve for her.
         </p>
       </div>
     </article>
@@ -80,12 +81,12 @@
       <span class="star-num">02</span>
       <div>
         <p class="label">Task</p>
-        <h2 class="star-head">Backend developer on a student team</h2>
+        <h2 class="star-head">My part: the backend</h2>
         <p class="star-body">
-          We built it as a team, and I owned the backend: the MySQL database
-          design and the PHP logic behind it — most importantly, the booking
-          engine itself, where the double-booking problem had to be solved at
-          the data level, not patched over in the interface.
+          We worked on this as a team, and I took the backend side — designing
+          the MySQL database and writing the PHP behind it. The part I spent
+          the most time on was the booking logic, since that's where the
+          double-booking issue actually had to be handled.
         </p>
       </div>
     </article>
@@ -94,13 +95,14 @@
       <span class="star-num">03</span>
       <div>
         <p class="label">Action</p>
-        <h2 class="star-head">How I built it</h2>
+        <h2 class="star-head">How we built it</h2>
         <p class="star-body">
-          The front end is HTML, CSS, and JavaScript; the backend is PHP on a
-          MySQL database. The heart of my work is the availability check: a
-          booking is only accepted if no confirmed reservation overlaps the
-          requested dates — the kind of guarantee that has to live in the
-          database query itself.
+          The front end is plain HTML, CSS, and JavaScript, and the backend runs
+          on PHP with a MySQL database. The main thing I had to get right was the
+          availability check. Instead of trying to catch conflicts in the
+          interface, I made the database answer the question directly: a booking
+          only goes through if no confirmed reservation overlaps the dates being
+          requested.
         </p>
         <pre class="code-block"><code>-- The double-booking guard: two date ranges overlap when
 -- each one starts before the other one ends.
@@ -116,16 +118,17 @@ WHERE status = 'confirmed'
       <span class="star-num">04</span>
       <div>
         <p class="label">Result</p>
-        <h2 class="star-head">What it achieved</h2>
+        <h2 class="star-head">Where it stands</h2>
         <p class="star-body">
-          The site is in active development — we're finishing it to be fully
-          functional and error-free before it goes live for real guests. It has
-          also been my proving ground: the project where classroom concepts
-          became a working full-stack system with a client on the other end.
+          The site is still in development. We're working through the remaining
+          features and fixing what breaks before it goes live for real guests.
+          Looking back, this is the project that taught me the most — it was the
+          first time the things I learned in class had to hold up for someone
+          outside of school.
         </p>
         <div class="star-stats">
-          <div><span class="stat-n">1</span><span class="stat-l">real client served</span></div>
-          <div><span class="stat-n">0</span><span class="stat-l">double bookings, by design</span></div>
+          <div><span class="stat-n">1</span><span class="stat-l">real client</span></div>
+          <div><span class="stat-n">2</span><span class="stat-l">sides built: guest &amp; admin</span></div>
         </div>
       </div>
     </article>

@@ -490,12 +490,17 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   overflow: hidden;
   border-radius: 8px;
   border: 1px solid #d8d0c2;
+  /* Sized to sit comfortably in one screen rather than filling it —
+     you can see the photo and the text around it at the same time. */
+  max-width: 56rem;
+  margin-inline: auto;
 }
 .cs-gallery .cs-img {
   display: none;
   border: 0;
   border-radius: 0;
   aspect-ratio: 16 / 9;   /* stable height while photos change */
+  max-height: 62svh;      /* never taller than most of the viewport */
   object-fit: contain;    /* letterbox instead of cropping screenshots */
   background: #121210;
 }

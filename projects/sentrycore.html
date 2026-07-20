@@ -39,14 +39,14 @@
 
   <section class="cs-hero" data-reveal>
     <div class="cs-gallery">
-      <img class="cs-img is-active" src="../assets/images/SentryCORE/Lock_System.jpg"
-           alt="The sentryCORE physical build — Arduino, keypad, LCD, and lock mechanism wired together">
+      <img class="cs-img is-active" src="../assets/images/SentryCORE/Dashboard_Lock.jpg"
+           alt="The sentryCORE dashboard — system locked and monitoring">
+      <img class="cs-img" loading="lazy" src="../assets/images/SentryCORE/Lock_System.jpg"
+           alt="The physical build — Arduino, keypad, LCD, and lock mechanism wired together">
       <img class="cs-img" loading="lazy" src="../assets/images/SentryCORE/Lock_System_Wiring.jpg"
            alt="Inside the build — the full wiring between Arduino and components">
       <img class="cs-img" loading="lazy" src="../assets/images/SentryCORE/Lock_State_Display.jpg"
            alt="The 16x2 LCD showing the lock state">
-      <img class="cs-img" loading="lazy" src="../assets/images/SentryCORE/Dashboard_Lock.jpg"
-           alt="Web dashboard — system locked and monitoring">
       <img class="cs-img" loading="lazy" src="../assets/images/SentryCORE/Dashboard_Unlock.jpg"
            alt="Web dashboard — successful unlock event">
       <img class="cs-img" loading="lazy" src="../assets/images/SentryCORE/Dashboard_Lockdown.jpg"
@@ -64,12 +64,13 @@
       <span class="star-num">01</span>
       <div>
         <p class="label">Situation</p>
-        <h2 class="star-head">A smart lock that thinks</h2>
+        <h2 class="star-head">Where the idea came from</h2>
         <p class="star-body">
-          My Control Systems final project. Smart locks exist and AI exists —
-          but I hadn't seen the two working together, so I decided to build it:
-          a lock that doesn't just check a PIN, but watches for threats,
-          reasons about them with a local AI model, and physically responds.
+          This was my final project for Control Systems. I had seen plenty of
+          smart locks and plenty of AI projects, but not really the two put
+          together, and I was curious what that would look like. So I tried
+          building one: a lock that doesn't just check whether a PIN is correct,
+          but also pays attention to how someone is trying to get in.
         </p>
       </div>
     </article>
@@ -80,10 +81,11 @@
         <p class="label">Task</p>
         <h2 class="star-head">Solo build — every layer mine</h2>
         <p class="star-body">
-          I built the whole system alone: the Arduino firmware, the Python
-          backend, the AI integration, and the web dashboard. That meant
-          owning every interface between layers — serial protocol, API
-          endpoints, and the safety logic that decides when the lock acts.
+          For this project, I developed the Arduino firmware, 
+          Python backend, AI integration, and web dashboard. 
+          Working across the entire system helped me understand 
+          how each component communicates through serial protocols, 
+          APIs, and the control logic behind the smart lock.
         </p>
       </div>
     </article>
@@ -92,18 +94,23 @@
       <span class="star-num">03</span>
       <div>
         <p class="label">Action</p>
-        <h2 class="star-head">Three layers and a guardrail</h2>
+        <h2 class="star-head">How the system works</h2>
         <p class="star-body">
-          The Arduino handles the physical world: keypad entry, brute-force
-          detection at the edge, and the lock mechanism. It streams security
-          logs over USB serial to a Python/Flask backend, where a background
-          listener reacts instantly — OpenCV snaps a webcam photo as evidence,
-          and the log goes to DeepSeek (running locally in LM Studio) for
-          threat analysis. But the AI never acts alone: a two-way guardrail
-          only triggers a lockdown when hardware and AI agree — if the AI
-          misses a real threat, Python overrides it; if the AI hallucinates
-          one, Python blocks it. A live dashboard (HTML/JS) shows lock status,
-          AI summaries, and intruder photos, with a manual override.
+          The Arduino handles everything physical — the keypad, the lock itself,
+          and counting failed attempts. Whenever something happens, it sends a
+          short log over USB to a Python and Flask backend that's always
+          listening. That backend takes a webcam photo with OpenCV, then passes
+          the log to DeepSeek running locally through LM Studio so it can
+          describe what it thinks is going on.
+        </p>
+        <p class="star-body">
+          The part I had to think about most was trust. A small local model can
+          be wrong in both directions, so I didn't want it deciding on its own.
+          Now the hardware and the AI both have to agree before anything locks
+          down. If the AI misses a threat the Arduino already flagged, Python
+          locks anyway; if the AI raises an alarm the hardware never saw, Python
+          ignores it. Everything shows up on a simple dashboard with the lock
+          status, the AI's summary, the captured photo, and a manual override.
         </p>
 
         <h3 class="cs-sub">Hardware used</h3>
@@ -147,22 +154,20 @@ elif not hardware_demands_lockdown and ai_wants_lockdown:
       <span class="star-num">04</span>
       <div>
         <p class="label">Result</p>
-        <h2 class="star-head">Working end-to-end, safely</h2>
+        <h2 class="star-head">How it turned out</h2>
         <p class="star-body">
-          The full loop runs: a brute-force attempt at the keypad ends with a
-          physical lockdown, photo evidence, and an AI-written threat summary
-          on the dashboard — all on a 1.5B-parameter model running locally,
-          no cloud. The model does hallucinate sometimes; the system stays
-          safe anyway, because the guardrail was designed assuming it would.
-          Engineering for an unreliable component is the whole lesson.
+          It works end to end. Someone keying in wrong PINs repeatedly gets the
+          lock shut, their photo captured, and a written summary of what
+          happened on the dashboard — all running on a small 1.5B model on my
+          own machine, with no internet needed. The model still hallucinates
+          now and then, which is what pushed me to add the double-check in the
+          first place. Building around something that isn't always right ended
+          up being the most useful thing I learned here.
         </p>
         <div class="star-stats">
-          <div><span class="stat-n">1.5B</span><span class="stat-l">params, fully local AI</span></div>
-          <div><span class="stat-n">2×</span><span class="stat-l">verification before lockdown</span></div>
+          <div><span class="stat-n">1.5B</span><span class="stat-l">model, running locally</span></div>
+          <div><span class="stat-n">2</span><span class="stat-l">checks before it locks down</span></div>
         </div>
-        <img class="cs-img" loading="lazy"
-             src="../assets/images/SentryCORE/Dashboard_Lockdown.jpg"
-             alt="sentryCORE web dashboard during an AI-verified lockdown, showing the threat summary and captured photo">
       </div>
     </article>
   </section>
