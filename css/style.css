@@ -164,14 +164,31 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   text-transform: uppercase;
   letter-spacing: .08em;
 }
-/* Profile photo — fills the space under the statement; the violet
-   offset slab echoes the footer's long-shadow motif. */
+/* Photo column: one large portrait over a strip of smaller shots.
+   The violet offset slab echoes the footer's long-shadow motif; the
+   thumbnails sit desaturated until hovered, the same "rest quiet,
+   sharpen on attention" language as the project grid. */
+.about-photos { margin-top: 2.2rem; max-width: 26rem; }
 .about-pfp {
-  width: min(320px, 85%);
+  width: 100%;
   border-radius: 12px;
-  margin-top: 2.2rem;
-  box-shadow: 14px 14px 0 var(--violet);
+  box-shadow: 13px 13px 0 var(--violet);
 }
+.about-pfp-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .6rem;
+  margin-top: 1.8rem;
+}
+.about-pfp-row img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  filter: grayscale(65%);
+  transition: filter .5s ease, transform .35s cubic-bezier(.2, .7, .2, 1);
+}
+.about-pfp-row img:hover { filter: grayscale(0); transform: translateY(-5px); }
 
 /* Education + toolbox lists in About (headings reuse .cs-sub) */
 .about-body .cs-sub { margin-top: 1.8rem; }
