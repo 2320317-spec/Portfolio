@@ -26,14 +26,12 @@
       <span class="cascade-line" style="--base:300ms">Bot</span>
     </h1>
     <div class="cs-meta">
-      <span>2025</span><span>Robotics</span><span>Role: Developer</span>
+      <span>2025</span><span>Robotics</span><span>Role: Hardware &amp; Firmware</span>
     </div>
     <ul class="chips" aria-label="Tech stack">
-      <li>Arduino</li><li>C/C++</li><li>Sensors</li>
+      <li>Arduino Uno</li><li>C/C++</li><li>IR Sensors</li>
+      <li>Ultrasonic</li><li>Servos</li>
     </ul>
-    <div class="cs-actions">
-      <a class="cs-btn" href="https://github.com/2320317-spec/Control_System_Finals.git" target="_blank" rel="noopener">GitHub repo ↗</a>
-    </div>
   </section>
 
   <section class="cs-hero" data-reveal>
@@ -61,8 +59,13 @@
       <span class="star-num">01</span>
       <div>
         <p class="label">Situation</p>
-        <h2 class="star-head">The context &amp; the problem</h2>
-        <p class="star-body">[PLACEHOLDER — Myke's STAR content, Task 12]</p>
+        <h2 class="star-head">A maze and a robot</h2>
+        <p class="star-body">
+          A school project, and honestly the one I had the most fun with. The
+          goal was simple to say and harder to do: build a small robot that can
+          find its own way through a maze, with no one steering it. Four of us
+          worked on it together.
+        </p>
       </div>
     </article>
 
@@ -70,8 +73,13 @@
       <span class="star-num">02</span>
       <div>
         <p class="label">Task</p>
-        <h2 class="star-head">My role &amp; responsibility</h2>
-        <p class="star-body">[PLACEHOLDER — Task 12]</p>
+        <h2 class="star-head">Mostly the hardware side</h2>
+        <p class="star-body">
+          We started building it together as a group of four. As it went on I
+          ended up focusing on the hardware — wiring the sensors and motors,
+          putting the chassis together, and keeping the electronics working
+          through testing — plus some of the code that runs on it.
+        </p>
       </div>
     </article>
 
@@ -79,24 +87,50 @@
       <span class="star-num">03</span>
       <div>
         <p class="label">Action</p>
-        <h2 class="star-head">How I built it</h2>
-        <p class="star-body">[PLACEHOLDER — Task 12]</p>
+        <h2 class="star-head">From random turns to one rule</h2>
+        <p class="star-body">
+          An Arduino Uno reads the sensors and drives the servos. Ultrasonic
+          sensors measure how far the walls are, IR sensors pick up what's
+          close on the sides, and the whole thing runs off a battery pack so
+          it isn't tied to anything.
+        </p>
+        <p class="star-body">
+          On our first trial the robot basically moved at random — whenever it
+          saw no obstacle, it just went that way. It did eventually stumble
+          forward, but it wandered, repeated paths, and there was no way to
+          predict it. So we stopped and actually looked at the maze, traced the
+          shortest way through, and realised we didn't need the robot to be
+          clever at all. We rewrote it to follow only the left wall. One rule,
+          and it made it through consistently.
+        </p>
 
         <h3 class="cs-sub">Hardware used</h3>
         <ul class="hw-list" aria-label="Hardware components">
-          <li>Arduino</li>
-          <li>Motors + wheels</li>
-          <li>Sensors</li>
+          <li>Arduino Uno</li>
+          <li>Servo motors</li>
+          <li>Ultrasonic sensors</li>
+          <li>IR sensors</li>
+          <li>Battery pack</li>
         </ul>
 
         <h3 class="cs-sub">How it solves the maze</h3>
         <ol class="algo-steps">
-          <li>[PLACEHOLDER — step 1 of the actual navigation logic, Task 12]</li>
-          <li>[PLACEHOLDER — step 2]</li>
-          <li>[PLACEHOLDER — step 3]</li>
+          <li>Check the left side first — if there's an opening there, turn left and take it.</li>
+          <li>If the left is walled, keep going straight for as long as the path ahead is clear.</li>
+          <li>If both the left and the front are blocked, turn right and start over from step one.</li>
         </ol>
 
-        <pre class="code-block"><code>// PLACEHOLDER — a real snippet from the project (Task 12)</code></pre>
+        <pre class="code-block"><code>// Left-wall following: always prefer the leftmost opening.
+// Keeping one hand on the same wall walks you through the
+// whole maze — the robot needs no map and no memory.
+if (leftIsOpen()) {
+    turnLeft();
+    forward();
+} else if (frontIsOpen()) {
+    forward();
+} else {
+    turnRight();   // walled on the left and ahead
+}</code></pre>
       </div>
     </article>
 
@@ -104,11 +138,18 @@
       <span class="star-num">04</span>
       <div>
         <p class="label">Result</p>
-        <h2 class="star-head">What it achieved</h2>
-        <p class="star-body">[PLACEHOLDER — Task 12]</p>
+        <h2 class="star-head">It solved the maze</h2>
+        <p class="star-body">
+          MazeBot passed — it gets through the maze on its own. What stuck with
+          me wasn't the robot itself but how we got there: our first instinct
+          was to let it figure things out as it went, and that turned out to be
+          the harder and worse way. Studying the maze first and picking a rule
+          that fit it beat trying to be clever, and it's something I've caught
+          myself applying to code since.
+        </p>
         <div class="star-stats">
-          <div><span class="stat-n">—</span><span class="stat-l">stat 1 (Task 12)</span></div>
-          <div><span class="stat-n">—</span><span class="stat-l">stat 2 (Task 12)</span></div>
+          <div><span class="stat-n">4</span><span class="stat-l">on the team</span></div>
+          <div><span class="stat-n">1</span><span class="stat-l">rule: follow the left wall</span></div>
         </div>
       </div>
     </article>
