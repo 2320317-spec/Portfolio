@@ -409,7 +409,7 @@ function initCamBox() {
   const note = box.querySelector('.cam-note');
   const ctx = canvas.getContext('2d');
 
-  const CELL = 7.5; // knob: dot pitch in px — smaller = finer image
+  const CELL = 8.5; // knob: dot pitch in px — smaller = finer image
 
   // Palette from the tokens, so a theme change carries into the feed.
   const styles = getComputedStyle(document.documentElement);

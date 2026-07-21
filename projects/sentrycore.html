@@ -33,6 +33,7 @@
       <li>DeepSeek</li><li>LM Studio</li><li>OpenCV</li>
     </ul>
     <div class="cs-actions">
+      <a class="cs-btn" href="https://drive.google.com/drive/folders/1xbY3PNzV-XJahltYid3FnTNQ7lK5Y4JV?usp=drive_link" target="_blank" rel="noopener">Gdrive Link ↗</a>
       <a class="cs-btn" href="https://github.com/2320317-spec/Control_System_Finals" target="_blank" rel="noopener">GitHub repo ↗</a>
     </div>
   </section>
@@ -65,7 +66,7 @@
       <div>
         <p class="label">Situation</p>
         <h2 class="star-head">Where the idea came from</h2>
-        <p class="star-body">
+        <p style="text-indent: 2em;" class="star-body">
           This was my final project for Control Systems. I had seen plenty of
           smart locks and plenty of AI projects, but not really the two put
           together, and I was curious what that would look like. So I tried
@@ -79,8 +80,8 @@
       <span class="star-num">02</span>
       <div>
         <p class="label">Task</p>
-        <h2 class="star-head">Solo build — every layer mine</h2>
-        <p class="star-body">
+        <h2 class="star-head">Connecting Hardware, Software, and AI.</h2>
+        <p style="text-indent: 2em;" class="star-body">
           For this project, I developed the Arduino firmware, 
           Python backend, AI integration, and web dashboard. 
           Working across the entire system helped me understand 
@@ -95,7 +96,7 @@
       <div>
         <p class="label">Action</p>
         <h2 class="star-head">How the system works</h2>
-        <p class="star-body">
+        <p style="text-indent: 2em;" class="star-body">
           The Arduino handles everything physical — the keypad, the lock itself,
           and counting failed attempts. Whenever something happens, it sends a
           short log over USB to a Python and Flask backend that's always
@@ -103,7 +104,7 @@
           the log to DeepSeek running locally through LM Studio so it can
           describe what it thinks is going on.
         </p>
-        <p class="star-body">
+        <p style="text-indent: 2em;" class="star-body">
           The part I had to think about most was trust. A small local model can
           be wrong in both directions, so I didn't want it deciding on its own.
           Now the hardware and the AI both have to agree before anything locks
@@ -155,10 +156,10 @@ elif not hardware_demands_lockdown and ai_wants_lockdown:
       <div>
         <p class="label">Result</p>
         <h2 class="star-head">How it turned out</h2>
-        <p class="star-body">
+        <p style="text-indent: 2em;" class="star-body">
           It works end to end. Someone keying in wrong PINs repeatedly gets the
           lock shut, their photo captured, and a written summary of what
-          happened on the dashboard — all running on a small 1.5B model on my
+          happened on the dashboard, all running on a small 1.5B model on my
           own machine, with no internet needed. The model still hallucinates
           now and then, which is what pushed me to add the double-check in the
           first place. Building around something that isn't always right ended
