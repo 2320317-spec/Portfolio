@@ -564,6 +564,18 @@ function initGalleries() {
   });
 }
 
+/* ---- Top nav: hairline appears only once scrolled ---- */
+/* At the very top the bar floats seamlessly on the hero; the moment you
+   scroll, a border + soft shadow lift it off the page. Lenis drives
+   native scroll, so window.scrollY and the scroll event both still work. */
+function initNav() {
+  const nav = document.querySelector('.site-nav');
+  if (!nav) return;
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
+
 /* ---- Curtain page transition ---- */
 /* Exit: intercept internal link clicks, drop the panels, THEN navigate.
    A sessionStorage flag tells the next page it arrived via curtain, so

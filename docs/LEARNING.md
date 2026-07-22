@@ -238,3 +238,10 @@ Concepts I used and can explain. One line each; details in the linked code.
 - **Camera ethics are UX:** starts only from a click, the note says everything stays on-device, Stop actually stops the tracks (the camera light goes off), and a denied permission changes the copy instead of breaking. The failure path got tested before the success path.
 - **Selfie mirror:** the sampler flips horizontally (`scale(-1,1)`) — un-mirrored video feels wrong when you move.
 - **Design iteration is allowed to delete:** the count-up receipts shipped, looked flat in context, and got replaced the same day. Kill your darlings; git remembers them.
+
+## Top navigation (replacing the bookmark tabs)
+- **Why the swap:** the notebook bookmark tabs were a nice flourish, but a visiting client instinctively looks for a plain bar at the top. Consistent site-wide nav beats a clever one-off — usability over novelty.
+- **Fixed overlay + clearance, not a pushing header:** the bar is `position: fixed` (floats over content). Only the homepage hero's marquee sits flush to the very top, so just `.sheet-hero` gets `padding-top: var(--nav-h)`; every real section already has more top padding than the 51px bar, so they clear on their own.
+- **Layering:** nav `z-index: 100`, curtain `z-index: 999` — the page-transition wipe still passes over the nav.
+- **Shadow on scroll:** `initNav()` toggles a `.scrolled` class past 8px, so the bar floats seamlessly on the hero at the top and lifts off the page once you move. Reuses the fact that Lenis still fires native scroll events.
+- **Cross-page anchors:** project-page links point at `../index.html#about`; the curtain intercepts the internal navigation and the browser lands on the section. One nav markup, two contexts.

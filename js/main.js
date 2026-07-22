@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCamBox();
   initGalleries();
   initSheets();
+  initNav();
   initCurtain();
 
   // #6 Smooth scroll — the only external library, added last.
