@@ -83,31 +83,6 @@ section { padding: clamp(4rem, 10vh, 7rem) var(--pad-x); }
   color: #6f675a;
 }
 
-/* ============ #5 MARQUEE ============ */
-.marquee {
-  background: var(--ink);
-  color: var(--cream);
-  overflow: hidden;
-  white-space: nowrap;
-  padding: .9rem 0;
-}
-.marquee-track {
-  display: inline-block;
-  /* 72s, not 18s: the phrase is repeated 4x per span, so one loop covers
-     4x the distance — duration scales with it to keep the same pace. */
-  animation: marquee-scroll 72s linear infinite;
-}
-.marquee-track span {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: .1em;
-}
-@keyframes marquee-scroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
 /* ============ #1 LETTER CASCADE ============ */
 .word-wrap { display: inline-block; white-space: nowrap; }
 .letter {
